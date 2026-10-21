@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Upskill10x — Practical courses in SEO, ads, design, development &amp; data</title>
+<meta name="description" content="Job-ready online courses in SEO, Meta Ads, video editing, graphic design, website & app development, Excel and Power BI. Buy one course or get all eight with the All-Access Pass.">
+<meta name="theme-color" content="#0056d2">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+/* ---------- Hero ---------- */
+.hero{padding:56px 0 40px;position:relative;overflow:hidden;background:
+  radial-gradient(900px 420px at 85% 10%, rgba(0,86,210,.10), transparent 60%),
+  radial-gradient(600px 360px at 0% 100%, rgba(249,115,22,.08), transparent 60%)}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero h1{font-size:clamp(34px,5vw,58px);line-height:1.04;letter-spacing:-.035em;margin-bottom:18px}
+.hero h1 .ten{color:var(--orange-500)}
+.hero .lede{font-size:18px;color:var(--ink-2);max-width:540px;margin-bottom:28px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:30px}
+.hero-proof{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--muted)}
+.avs{display:flex}
+.avs span{width:34px;height:34px;border-radius:50%;border:2.5px solid #fff;margin-left:-9px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+.avs span:first-child{margin-left:0}
+.hero-proof b{color:var(--ink)}
+.pill-badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:6px 14px 6px 6px;font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:22px;box-shadow:var(--shadow-1)}
+.pill-badge em{font-style:normal;background:var(--orange-100);color:var(--orange-600);font-weight:800;font-size:11.5px;padding:3px 9px;border-radius:99px}
+
+/* Phone mock-up of the app */
+.hero-visual{position:relative;display:flex;justify-content:center;min-height:540px}
+.phone{width:290px;height:560px;border-radius:44px;background:#0b1730;padding:11px;box-shadow:var(--shadow-3);position:relative;z-index:2;transform:rotate(-3deg)}
+.phone-screen{width:100%;height:100%;border-radius:34px;background:#fff;overflow:hidden;padding:30px 16px 0;position:relative}
+.phone-notch{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:84px;height:22px;background:#0b1730;border-radius:99px}
+.ph-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ph-top small{display:block;font-size:9.5px;color:var(--muted);font-weight:600}
+.ph-top b{font-size:19px;letter-spacing:-.02em}
+.ph-streak{font-size:11px;font-weight:800;color:var(--orange-600);background:var(--orange-100);padding:4px 8px;border-radius:99px}
+.ph-card{border:1px solid rgba(0,86,210,.25);border-radius:16px;padding:14px;margin-bottom:10px}
+.ph-card h5{font-size:13px;margin-bottom:2px}
+.ph-card p{font-size:10px;color:var(--muted);margin-bottom:10px}
+.ph-bar{height:6px;border-radius:99px;background:var(--bg-3);overflow:hidden;margin-bottom:10px}
+.ph-bar span{display:block;height:100%;width:67%;background:linear-gradient(90deg,var(--blue-600),var(--blue-200));border-radius:99px}
+.ph-btn{background:var(--blue-700);color:#fff;font-size:11px;font-weight:700;text-align:center;padding:9px;border-radius:10px}
+.ph-promo{border-radius:16px;padding:14px;color:#fff;background:linear-gradient(135deg,var(--orange-600),var(--orange-400));margin-bottom:10px;position:relative;overflow:hidden}
+.ph-promo::after{content:'';position:absolute;right:-24px;top:-24px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.15)}
+.ph-promo small{font-size:8.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.22);padding:3px 7px;border-radius:99px}
+.ph-promo h5{font-size:13px;margin:7px 0 2px}
+.ph-promo p{font-size:9.5px;opacity:.9}
+.ph-stats{display:flex;gap:7px}
+.ph-stats div{flex:1;border:1px solid var(--line-2);border-radius:12px;padding:9px 4px;text-align:center}
+.ph-stats b{font-size:14px;display:block}
+.ph-stats span{font-size:8.5px;color:var(--muted)}
+.ph-nav{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--line-2);display:flex;justify-content:space-around;padding:9px 0 14px;background:#fff}
+.ph-nav i{width:20px;height:20px;border-radius:6px;background:var(--bg-3)}
+.ph-nav i.on{background:var(--blue-700)}
+.float-card{position:absolute;z-index:3;background:#fff;border-radius:16px;box-shadow:var(--shadow-2);padding:12px 14px;display:flex;align-items:center;gap:11px;font-size:13px;border:1px solid var(--line-2)}
+.float-card b{display:block;font-size:14px}
+.float-card span{color:var(--muted);font-size:12px}
+.fc-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.fc1{left:-6px;top:70px;animation:bob 6s ease-in-out infinite}
+.fc2{right:-10px;top:230px;animation:bob 6s ease-in-out -2s infinite}
+.fc3{left:10px;bottom:56px;animation:bob 6s ease-in-out -4s infinite}
+@keyframes bob{50%{transform:translateY(-8px)}}
+.blob-o{position:absolute;width:340px;height:340px;border-radius:50%;background:var(--blue-50);top:60px;left:50%;transform:translateX(-50%);z-index:1}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:44px}
+.stat{background:#fff;border:1px solid var(--line-2);border-radius:16px;padding:18px 20px}
+.stat b{font-size:28px;letter-spacing:-.03em;display:block}
+.stat span{font-size:13px;color:var(--muted);font-weight:600}
+.stat:nth-child(1) b{color:var(--blue-700)}
+.stat:nth-child(2) b{color:var(--orange-500)}
+.stat:nth-child(3) b{color:#0f766e}
+.stat:nth-child(4) b{color:var(--blue-900)}
+
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-visual{min-height:500px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:560px){
+  .hero{padding-top:36px}
+  .hero .lede{font-size:16px}
+  .hero-ctas .btn{flex:1}
+  .hero-visual{transform:scale(.88);margin:-30px 0 -40px}
+  .fc1{left:-14px}.fc2{right:-18px}
+}
+
+/* ---------- How it works / features ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.step{background:#fff;border:1px solid var(--line-2);border-radius:20px;padding:26px}
+.step-n{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px;margin-bottom:16px}
+.step h3{font-size:18px;margin-bottom:8px}
+.step p{color:var(--muted);font-size:14.5px}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.feature{padding:4px}
+.f-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.f-ico .icon{width:22px;height:22px}
+.feature h3{font-size:17px;margin-bottom:6px}
+.feature p{color:var(--muted);font-size:14.5px}
+@media (max-width:860px){ .steps,.features{grid-template-columns:1fr} }
+
+/* ---------- Testimonials ---------- */
+.tests{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.test{background:#fff;border:1px solid var(--line-2);border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.test q{font-size:15.5px;color:var(--ink-2);quotes:none}
+.test-who{display:flex;align-items:center;gap:12px;margin-top:auto}
+.test-av{width:42px;height:42px;border-radius:12px;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px}
+.test-who b{display:block;font-size:14.5px}
+.test-who span{font-size:12.5px;color:var(--muted)}
+.test-jump{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;flex-wrap:wrap}
+.test-jump .from{color:var(--muted);text-decoration:line-through}
+.test-jump .to{color:var(--green);background:var(--green-50);padding:3px 9px;border-radius:99px}
+@media (max-width:760px){ .tests{grid-template-columns:1fr} }
+
+/* ---------- Final CTA ---------- */
+.final{background:linear-gradient(130deg,var(--blue-900),var(--blue-700));border-radius:28px;color:#fff;padding:56px 40px;display:grid;grid-template-columns:1.3fr 1fr;gap:30px;align-items:center;position:relative;overflow:hidden}
+.final::after{content:'';position:absolute;right:-80px;top:-80px;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07)}
+.final h2{font-size:clamp(26px,3.4vw,38px);margin-bottom:10px}
+.final p{opacity:.85;font-size:16px}
+.final-box{background:#fff;color:var(--ink);border-radius:20px;padding:22px;position:relative;z-index:1}
+@media (max-width:860px){ .final{grid-template-columns:1fr;padding:36px 22px} }
+</style>
+</head>
+<body>
+<div id="chrome-top" data-no-offer></div>
+
+<main>
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="pill-badge"><em>NEW</em> Learn on the Upskill10x app — Android &amp; web</span>
+        <h1>Learn the skills that pay. Grow <span class="ten">10x</span> faster.</h1>
+        <p class="lede">Practical courses in SEO, Meta Ads, video, design, web &amp; app development and data — taught through real projects, in a learning app that keeps you on track. Buy one course, or unlock every course with the All-Access Pass.</p>
+        <div class="hero-ctas">
+          <a href="/courses" class="btn btn-primary btn-lg">Browse courses</a>
+          <a href="/pricing" class="btn btn-ghost btn-lg">See pricing</a>
+        </div>
+        <div class="hero-proof">
+          <div class="avs">
+            <span style="background:#0056d2">PS</span><span style="background:#f97316">RK</span><span style="background:#0f766e">AP</span><span style="background:#002c6b">AB</span>
+          </div>
+          <span>Join <b>2,500+ learners</b> building real careers</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="blob-o"></div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="ph-top"><div><small>Welcome back</small><b>Priya</b></div><span class="ph-streak">🔥 12</span></div>
+            <div class="ph-card"><h5>Meta Ads Fundamentals</h5><p>Lesson 5 · Campaigns for cold audiences</p><div class="ph-bar"><span></span></div><div class="ph-btn">Resume lesson</div></div>
+            <div class="ph-promo"><small>All-Access</small><h5>Every course, one price</h5><p>SEO, ads, video, design and more.</p></div>
+            <div class="ph-stats"><div><b>67%</b><span>Progress</span></div><div><b>18</b><span>Lessons</span></div><div><b>3</b><span>Courses</span></div></div>
+            <div class="ph-nav"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="float-card fc1"><div class="fc-ico" style="background:var(--orange-100)">🔥</div><div><b>12-day streak</b><span>Keep it going</span></div></div>
+        <div class="float-card fc2"><div class="fc-ico" style="background:var(--blue-50)">🎓</div><div><b>Certificate</b><span>On every course</span></div></div>
+        <div class="float-card fc3"><div class="fc-ico" style="background:var(--green-50)">💼</div><div><b>Jobs board</b><span>Live openings</span></div></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b data-count="2500" data-suffix="+">2,500+</b><span>Learners trained</span></div>
+      <div class="stat"><b id="statCourses">—</b><span>Courses</span></div>
+      <div class="stat"><b id="statLessons">—</b><span>Practical lessons</span></div>
+      <div class="stat"><b data-count="94" data-suffix="%">94%</b><span>Success rate</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how" class="tint">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">How it works</span>
+      <h2>From first lesson to first client</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="step-n" style="background:var(--blue-50);color:var(--blue-700)">1</div><h3>Pick a course — or all of them</h3><p>Browse the curriculum and watch free preview lessons before you buy. Pay once with UPI, cards or netbanking.</p></div>
+      <div class="step reveal"><div class="step-n" style="background:var(--orange-100);color:var(--orange-600)">2</div><h3>Learn in the app, module by module</h3><p>Short, practical lessons. Finish a module to unlock the next, track your streak and pick up exactly where you left off.</p></div>
+      <div class="step reveal"><div class="step-n" style="background:var(--green-50);color:var(--green)">3</div><h3>Get hired or get clients</h3><p>Ask doubts in the community, build a portfolio from your projects and apply to live openings on the jobs board.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHY ================= -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Why Upskill10x</span>
+      <h2>Built for doing, not just watching</h2>
+    </div>
+    <div class="features">
+      <div class="feature reveal"><div class="f-ico" style="background:var(--blue-50);color:var(--blue-700)"><svg class="icon" viewBox="0 0 24 24"><path d="m4 17 6-6-4-4M12 19h8"/></svg></div><h3>100% practical</h3><p>Every concept is taught hands-on, on the real platforms — run campaigns, edit real footage, ship real websites and apps.</p></div>
+      <div class="feature reveal"><div class="f-ico" style="background:var(--orange-100);color:var(--orange-600)"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div><h3>Career-focused</h3><p>Skills employers actually ask for, plus resume and portfolio help and a live jobs board inside the app.</p></div>
+      <div class="feature reveal"><div class="f-ico" style="background:var(--green-50);color:var(--green)"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Freelancing blueprint</h3><p>Client acquisition, pricing and proposal templates so you can start earning while you learn.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="tint" id="stories">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">Real results</span>
+      <h2>Learners who leveled up</h2>
+    </div>
+    <div class="tests" id="tests"></div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+    <div class="faq" id="faqList"></div>
+  </div>
+</section>
+
+<!-- ================= FINAL CTA ================= -->
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="final">
+      <div style="position:relative;z-index:1">
+        <h2>Start learning today</h2>
+        <p>Create a free account, watch the preview lessons and decide what to buy when you're ready.</p>
+      </div>
+      <div class="final-box">
+        <div style="font-size:15px;font-weight:800;margin-bottom:4px">Free to join</div>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Free preview lessons on every course. Buy one course or all of them, whenever you're ready.</p>
+        <a href="/auth?tab=register" class="btn btn-accent btn-block btn-lg" style="margin-bottom:10px">Join for free</a>
+        <a href="/courses" class="btn btn-ghost btn-block">Browse courses</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div id="chrome-footer"></div>
+
+<script src="/assets/site.js"></script>
+<script src="/assets/chrome.js"></script>
+<script>
+const { esc } = U;
+
+const TESTIMONIALS = [
+  {name:"Priya Sharma", loc:"Lucknow, UP", init:"PS", c:"#0056d2", quote:"I had zero digital marketing knowledge when I started. After the course I landed a job at a Lucknow agency at ₹25,000/month. The practical exercises made all the difference!", from:"College student, no experience", to:"Digital Marketing Executive"},
+  {name:"Rajesh Kumar", loc:"Jaipur, Rajasthan", init:"RK", c:"#f97316", quote:"The freelancing module changed my life. I now manage social media for 3 local businesses and earn ₹45,000 a month. The templates and client-acquisition strategies were gold.", from:"Unemployed graduate", to:"Freelance Social Media Manager"},
+  {name:"Ananya Patel", loc:"Indore, MP", init:"AP", c:"#0f766e", quote:"I applied the local SEO and Instagram strategies to my small boutique — sales went up 85% in just 3 months.", from:"Struggling boutique owner", to:"Thriving local brand online"},
+  {name:"Aarav", loc:"Bhopal, MP", init:"AB", c:"#002c6b", quote:"I was at a call centre earning ₹15,000. The Google Ads and SEO lessons were so clear that within 4 months I was hired at ₹38,000 plus incentives.", from:"₹15,000/month, call centre", to:"₹38,000/month, Digital Marketing Specialist"}
+];
+const FAQS = [
+  {q:"Should I buy one course or the All-Access Pass?", a:"If you want one specific skill, buy that course. If you'd like to combine skills — say SEO, Meta Ads and website development — the All-Access Pass costs less than a handful of single courses and includes every new course we launch."},
+  {q:"Is this suitable for absolute beginners?", a:"Yes. Every course starts from the fundamentals and moves to advanced, practical work step by step, with real examples you can follow along with."},
+  {q:"Do I get lifetime access?", a:"Yes. You pay once and keep access to what you bought — including future updates to those courses. All-Access members also get every new course for free."},
+  {q:"Can I watch lessons before buying?", a:"Yes. Many courses have free preview lessons — look for the “Preview” tag in the course curriculum."},
+  {q:"How do I learn after buying?", a:"Log in on the web or in the Upskill10x Android app. Your courses, progress, community and jobs board are all in one place. Finish each module to unlock the next."},
+  {q:"What if I'm not satisfied?", a:"Email us within 48 hours of your purchase and we'll process a full refund — no questions asked."}
+];
+
+/* ---------- Testimonials + FAQ ---------- */
+document.getElementById('tests').innerHTML = TESTIMONIALS.map(t => `
+  <div class="test reveal">
+    <q>“${esc(t.quote)}”</q>
+    <div class="test-jump"><span class="from">${esc(t.from)}</span>→<span class="to">${esc(t.to)}</span></div>
+    <div class="test-who"><div class="test-av" style="background:${t.c}">${t.init}</div><div><b>${esc(t.name)}</b><span>${esc(t.loc)}</span></div></div>
+  </div>`).join('');
+document.getElementById('faqList').innerHTML = FAQS.map(f => `
+  <div class="faq-item">
+    <button class="faq-q">${esc(f.q)}<svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="faq-a"><p>${esc(f.a)}</p></div>
+  </div>`).join('');
+document.querySelectorAll('.faq-item').forEach(item => {
+  item.querySelector('.faq-q').addEventListener('click', () => {
+    const a = item.querySelector('.faq-a');
+    const open = item.classList.toggle('open');
+    a.style.maxHeight = open ? a.scrollHeight + 'px' : null;
+  });
+});
+
+/* ---------- Stats (counts only — no prices on the home page) ---------- */
+CATALOG.then(({ courses }) => {
+  document.getElementById('statCourses').textContent = courses.length;
+  document.getElementById('statLessons').textContent = courses.reduce((n, c) => n + c.lesson_count, 0) + '+';
+});
+</script>
+</body>
+</html>

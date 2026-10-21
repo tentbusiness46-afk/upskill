@@ -1,0 +1,74 @@
+UPSKILL10X — CONFIGURING RAZORPAY
+=================================================
+
+PART 1 — CREATE YOUR ACCOUNT
+   1. Go to https://razorpay.com and sign up as a business.
+   2. You'll land in TEST MODE by default (toggle top-left of the
+      dashboard shows Test/Live) — use Test mode for everything until
+      you're ready to accept real money.
+   3. To go LIVE later, you'll need to complete KYC (PAN, business
+      proof/bank account, etc.) under Account & Settings -> Activate
+      Account. This can take Razorpay a day or two to approve.
+
+PART 2 — GET YOUR API KEYS
+   1. Dashboard -> Settings -> API Keys.
+   2. Click "Generate Test Key" (or "Generate Live Key" once activated).
+   3. Copy the Key Id and Key Secret immediately — the secret is only
+      shown once.
+   4. Put them in your .env (local) or Render environment variables
+      (deployed):
+        RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+        RAZORPAY_KEY_SECRET=xxxxxxxxxxxxxxxxxxxx
+   5. When you're ready to go live, repeat this for the Live keys and
+      swap the values — no code changes needed, the app reads whichever
+      keys are in the environment.
+
+PART 3 — SET UP THE WEBHOOK (backup payment confirmation)
+   1. Dashboard -> Settings -> Webhooks -> "+ Add New Webhook".
+   2. Webhook URL:
+        Local testing: you can't receive webhooks on localhost directly
+        unless you use a tunnel tool like ngrok (`ngrok http 3000`,
+        then use the https URL it gives you + /api/webhook/razorpay).
+        Deployed on Render: https://YOUR-APP.onrender.com/api/webhook/razorpay
+   3. Active Events: check "payment.captured" (that's the only one this
+      app listens for).
+   4. Secret: type any strong random string yourself, e.g. generate one
+      with:
+        node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"
+   5. Save. Put that SAME secret in your .env / Render environment as:
+        RAZORPAY_WEBHOOK_SECRET=<the secret you typed in step 4>
+   6. This webhook is a safety net — the main payment confirmation
+      already happens instantly in the browser via /api/verify-payment
+      right after checkout succeeds. The webhook just catches the rare
+      case where the user's payment succeeded but they closed the tab
+      before that could run.
+
+PART 4 — HOW THIS APP USES RAZORPAY (for your understanding, no action needed)
+   1. pay.html calls POST /api/create-order with the customer's name/
+      email/phone and an optional coupon code.
+   2. The server (routes/public.js) looks up the coupon server-side
+      (never trusts a price sent from the browser), creates a Razorpay
+      order for the correct amount, and returns the order id.
+   3. pay.html opens Razorpay's Checkout popup using that order id.
+   4. On success, Razorpay returns a payment id + signature to the
+      browser. pay.html sends these to POST /api/verify-payment, which
+      re-verifies the signature server-side, marks the order "paid",
+      marks the coupon (if any) as used, and marks the user as
+      "enrolled" — this is what unlocks /lms for them.
+
+PART 5 — TEST CARD DETAILS (Test Mode only)
+   Card number: 4111 1111 1111 1111
+   Expiry:      any future date (e.g. 12/30)
+   CVV:         any 3 digits (e.g. 123)
+   OTP:         1234 (if prompted)
+   Full list of test payment methods (UPI, netbanking, etc.):
+   https://razorpay.com/docs/payments/payments/test-card-upi-details/
+
+PART 6 — GOING LIVE CHECKLIST
+   [ ] Business KYC approved (Account & Settings -> Activate Account)
+   [ ] Swapped RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET to Live keys
+   [ ] Created a new Live-mode webhook (Test and Live webhooks are
+       separate) and updated RAZORPAY_WEBHOOK_SECRET
+   [ ] Did one real small test transaction yourself end-to-end
+   [ ] Checked Razorpay Dashboard -> Settlements to confirm payouts to
+       your bank are configured

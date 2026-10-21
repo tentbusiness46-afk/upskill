@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pricing — Upskill10x</title>
+<meta name="description" content="Buy a single Upskill10x course, or get every course with the All-Access Pass. One-time payment, lifetime access.">
+<meta name="theme-color" content="#0056d2">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+.page-band{text-align:center}
+.page-band p{margin:0 auto}
+.plans-wrap{margin-top:-30px;position:relative;z-index:2;padding-bottom:20px}
+.compare{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line-2);border-radius:18px;overflow:hidden;font-size:14.5px;background:#fff}
+.compare th,.compare td{padding:14px 18px;border-bottom:1px solid var(--line-2);text-align:center}
+.compare th:first-child,.compare td:first-child{text-align:left}
+.compare thead th{background:var(--bg-2);font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.compare thead th.hl-col{color:var(--orange-600)}
+.compare tr:last-child td{border-bottom:none}
+.compare td.hl-col{background:rgba(249,115,22,.05);font-weight:700}
+.yes{color:var(--green);font-weight:800}
+.no{color:var(--muted-2)}
+.price-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.pl-item{display:flex;align-items:center;gap:14px;border:1px solid var(--line-2);border-radius:16px;padding:12px;background:#fff;transition:.15s}
+.pl-item:hover{border-color:var(--blue-400)}
+.pl-item .thumb{width:86px;flex-shrink:0;border-radius:10px}
+.pl-item .thumb-art svg{width:38%}
+.pl-item b{display:block;font-size:14.5px;line-height:1.3}
+.pl-item .price-row{margin-top:3px}
+.pl-item .price{font-size:15px}
+.pl-item .mrp{font-size:12.5px}
+.pay-ways{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.pay-ways span{border:1px solid var(--line-2);border-radius:99px;padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink-2);background:#fff}
+@media (max-width:600px){ .compare th,.compare td{padding:12px 10px;font-size:13px} }
+</style>
+</head>
+<body>
+<div id="chrome-top"></div>
+
+<main>
+  <div class="page-band" style="padding-bottom:70px">
+    <div class="wrap">
+      <h1>Simple, one-time pricing</h1>
+      <p>No subscriptions. Pay once with UPI, cards or netbanking and keep access for life.</p>
+    </div>
+  </div>
+
+  <div class="wrap plans-wrap">
+    <div class="plans">
+      <div class="plan reveal">
+        <div class="plan-head"><h3>Single course</h3><p>Pick exactly the skill you need.</p></div>
+        <div class="plan-price"><small>from</small><span class="big" id="minPrice">₹—</span><small>/ course</small></div>
+        <ul>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Lifetime access to that course</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Learn on web and the mobile app</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Student community &amp; doubt support</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Live jobs board</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Certificate of completion</li>
+        </ul>
+        <div class="plan-cta"><a href="#prices" class="btn btn-ghost btn-block btn-lg">See course prices</a></div>
+      </div>
+      <div class="plan featured reveal">
+        <div class="plan-banner" id="bundleTitle">All-Access Pass</div>
+        <div class="ribbon" id="bundleOff" hidden></div>
+        <div class="plan-head" style="padding-top:18px"><p id="bundleTagline"></p></div>
+        <div class="plan-price"><span class="big" id="bundlePrice">₹—</span><span class="mrp" id="bundleMrp"></span><small>one-time</small></div>
+        <ul>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg><span>Unlimited access to <b id="bundleCount">all</b> courses</span></li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Every new course we add — free</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Community, doubt support &amp; jobs board</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Certificates for every course you finish</li>
+          <li><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg><span>Worth <b id="bundleWorth">—</b> if bought one by one</span></li>
+        </ul>
+        <div class="plan-cta">
+          <a href="/pay?item=bundle" class="btn btn-accent btn-block btn-lg">Buy now</a>
+          <div class="plan-timer">Offer ends in <div class="offer-timer" id="planTimer"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pay-ways"><span>UPI</span><span>Debit &amp; credit cards</span><span>Netbanking</span><span>Wallets</span><span>🔒 Secured by Razorpay</span></div>
+  </div>
+
+  <section>
+    <div class="wrap" style="max-width:900px">
+      <div class="sec-head center"><span class="eyebrow">Compare</span><h2>What you get</h2></div>
+      <table class="compare">
+        <thead><tr><th></th><th>Single course</th><th class="hl-col" id="cmpHead">All-Access</th></tr></thead>
+        <tbody id="cmpBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="prices" class="tint">
+    <div class="wrap">
+      <div class="sec-head"><span class="eyebrow">Course prices</span><h2>Buy just the course you need</h2><p>Every course includes free preview lessons — open one to try before you buy.</p></div>
+      <div class="price-list" id="priceList"><div class="skeleton" style="height:80px"></div><div class="skeleton" style="height:80px"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-head center"><span class="eyebrow">FAQ</span><h2>Payment questions</h2></div>
+      <div class="faq" id="faqList"></div>
+    </div>
+  </section>
+</main>
+
+<div id="chrome-footer"></div>
+
+<script src="/assets/site.js"></script>
+<script src="/assets/chrome.js"></script>
+<script>
+const { esc, rupees, thumb, offPct } = U;
+const FAQS = [
+  {q:"Is this a subscription?", a:"No. Every purchase is a one-time payment with lifetime access — nothing renews or gets charged again."},
+  {q:"Can I upgrade from one course to the All-Access Pass later?", a:"Yes — you can buy the All-Access Pass at any time and it unlocks every course, including the ones you already own."},
+  {q:"Do I get new courses with the All-Access Pass?", a:"Yes. Every course we add in the future is included at no extra cost."},
+  {q:"How do coupon codes work?", a:"Enter your code at checkout and tap Apply. The discount is shown before you pay, and works on single courses and the All-Access Pass."},
+  {q:"Which payment methods can I use?", a:"UPI, debit and credit cards, netbanking and wallets — all processed securely by Razorpay. We never store your card or bank details."},
+  {q:"What if I'm not satisfied?", a:"Request a refund within 48 hours of your purchase and we'll process it in full — no questions asked."}
+];
+document.getElementById('faqList').innerHTML = FAQS.map(f => `
+  <div class="faq-item"><button class="faq-q">${esc(f.q)}<svg class="icon" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button><div class="faq-a"><p>${esc(f.a)}</p></div></div>`).join('');
+document.querySelectorAll('.faq-item').forEach(item => item.querySelector('.faq-q').addEventListener('click', () => {
+  const a = item.querySelector('.faq-a'); const open = item.classList.toggle('open'); a.style.maxHeight = open ? a.scrollHeight + 'px' : null;
+}));
+
+CATALOG.then(({ courses, bundle }) => {
+  const prices = courses.map(c => c.price).filter(Boolean);
+  document.getElementById('minPrice').textContent = prices.length ? rupees(Math.min(...prices)) : '—';
+  const off = offPct(bundle.price, bundle.mrp);
+  const worth = courses.reduce((n, c) => n + (c.mrp || c.price || 0), 0);
+  document.getElementById('bundleTitle').textContent = bundle.title;
+  document.getElementById('bundleTagline').textContent = bundle.tagline;
+  document.getElementById('bundlePrice').textContent = rupees(bundle.price);
+  document.getElementById('bundleMrp').textContent = bundle.mrp ? rupees(bundle.mrp) : '';
+  document.getElementById('bundleCount').textContent = `all ${courses.length}`;
+  document.getElementById('bundleWorth').textContent = rupees(worth);
+  if (off) { const r = document.getElementById('bundleOff'); r.hidden = false; r.textContent = off + '% Off'; }
+  document.getElementById('cmpHead').textContent = bundle.title;
+
+  const rows = [
+    ['Courses included', '1', `All ${courses.length}`],
+    ['New courses we launch', '<span class="no">—</span>', '<span class="yes">✓ Free</span>'],
+    ['Lifetime access', '<span class="yes">✓</span>', '<span class="yes">✓</span>'],
+    ['Web + mobile app', '<span class="yes">✓</span>', '<span class="yes">✓</span>'],
+    ['Community &amp; doubt support', '<span class="yes">✓</span>', '<span class="yes">✓</span>'],
+    ['Live jobs board', '<span class="yes">✓</span>', '<span class="yes">✓</span>'],
+    ['Certificates', 'For that course', 'For every course'],
+    ['Price', prices.length ? `from ${rupees(Math.min(...prices))}` : '—', rupees(bundle.price)]
+  ];
+  document.getElementById('cmpBody').innerHTML = rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="hl-col">${r[2]}</td></tr>`).join('');
+
+  document.getElementById('priceList').innerHTML = courses.map(c => {
+    const o = offPct(c.price, c.mrp);
+    return `<a class="pl-item reveal" href="/course/${esc(c.slug)}"><div class="thumb">${thumb(c, { tag: false })}</div>
+      <div style="min-width:0"><b>${esc(c.title)}</b><span style="font-size:12.5px;color:var(--muted)">${c.lesson_count} lessons</span>
+      <div class="price-row"><span class="price">${rupees(c.price)}</span>${c.mrp ? `<span class="mrp">${rupees(c.mrp)}</span>` : ''}${o ? `<span class="off">${o}% off</span>` : ''}</div></div></a>`;
+  }).join('') || '<div class="empty">Courses coming soon.</div>';
+  observeReveal();
+});
+U.countdown([document.getElementById('planTimer')]);
+</script>
+</body>
+</html>

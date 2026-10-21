@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin login — Upskill10x</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,#001b44,#002c6b 60%,#0056d2);padding:20px}
+.card{background:#fff;border-radius:22px;padding:30px 26px;width:100%;max-width:400px;box-shadow:var(--shadow-3)}
+.card img{height:30px;margin:0 auto 18px}
+.card h1{font-size:20px;text-align:center;margin-bottom:4px}
+.card p{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:22px}
+</style>
+</head>
+<body>
+<form class="card" id="adminLoginForm" novalidate>
+  <img src="/assets/logo-wordmark.png" alt="Upskill10x">
+  <h1>Admin panel</h1>
+  <p>Sign in with your admin account.</p>
+  <div class="alert bad" id="errBox"><span id="errText"></span></div>
+  <div class="field" id="fEmail"><label for="email">Email</label><input class="input" type="email" id="email" autocomplete="username"><span class="err">Enter a valid email.</span></div>
+  <div class="field" id="fPassword"><label for="password">Password</label><input class="input" type="password" id="password" autocomplete="current-password"><span class="err">Enter your password.</span></div>
+  <button class="btn btn-primary btn-block btn-lg" type="submit">Log in</button>
+</form>
+<script>
+const form = document.getElementById('adminLoginForm');
+const errBox = document.getElementById('errBox');
+const valid = (id, ok) => { document.getElementById(id).classList.toggle('invalid', !ok); return ok; };
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  errBox.classList.remove('show');
+  const email = document.getElementById('email').value.trim(), password = document.getElementById('password').value;
+  if (![valid('fEmail', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)), valid('fPassword', password.length > 0)].every(Boolean)) return;
+  const btn = form.querySelector('button'); btn.disabled = true;
+  try {
+    const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ email, password }) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Login failed');
+    if (data.user.role !== 'admin') { await fetch('/api/logout', { method: 'POST', credentials: 'include' }); throw new Error('This account does not have admin access.'); }
+    location.href = '/admin';
+  } catch (err) {
+    document.getElementById('errText').textContent = err.message;
+    errBox.classList.add('show');
+  } finally { btn.disabled = false; }
+});
+</script>
+</body>
+</html>

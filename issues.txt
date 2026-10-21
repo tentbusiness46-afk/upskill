@@ -1,0 +1,17 @@
+- Formatting of admin & lms page headers * Done
+- Formatting of admin login * Done
+- Preview window for free with dialog box to pay * Done
+- Redirect and error message of admin login & community * Done
+- Formatting of PWYS success page * Done
+- Upfront amount * Done
+- Admin & LMS vertical scroll * Done
+- Coupon code logic & removing and changing existing logic of generating new codes * Done
+- PWYS different amounts * Done
+- Remove .html extensions and check if redirects are working well * Done
+- Separate community dialoges * Done
+- Ctrl + Enter should post in community * Done
+- LMS Admin login confusion * Not Worth It
+- Payment gateway
+- Video streaming pipeline
+- /about is going to main page, add 404 page * Done
+- PWYS form page 2 field errors

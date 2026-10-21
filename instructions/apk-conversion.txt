@@ -1,0 +1,125 @@
+UPSKILL10X — TURNING THIS INTO AN ANDROID APK
+=================================================
+Since Upskill10x is a website (not a native app), the fastest and
+most reliable way to get an APK is to wrap it — you're not rewriting
+anything, just packaging your live website into an installable app
+shell. There are two good options; pick ONE.
+
+OPTION A (RECOMMENDED) — TRUSTED WEB ACTIVITY (TWA)
+   Best if: you just want your live site to open as a "real" app icon,
+   full-screen, no browser address bar. This is what most production
+   PWA-to-APK conversions use (e.g. it's how Twitter Lite, Starbucks,
+   etc. ship Android apps). Small APK size, uses Chrome's engine
+   already on the phone.
+
+   PREREQUISITES
+     - Your site must be live at a real HTTPS domain (not localhost).
+     - Android Studio installed: https://developer.android.com/studio
+
+   STEPS
+     1. Add a Web App Manifest to your site so Android knows it's
+        installable. Create public/manifest.json:
+          {
+            "name": "Upskill10x",
+            "short_name": "Upskill10x",
+            "start_url": "/lms",
+            "display": "standalone",
+            "background_color": "#17181c",
+            "theme_color": "#4c1d95",
+            "icons": [
+              { "src": "/assets/logo.png", "sizes": "512x512", "type": "image/png" }
+            ]
+          }
+        Link it in the <head> of index.html and lms/index.html:
+          <link rel="manifest" href="/manifest.json">
+
+     2. Easiest path — use Google's free "PWABuilder" instead of
+        hand-configuring Android Studio:
+          a. Go to https://www.pwabuilder.com
+          b. Enter your live site URL (e.g. https://upskill10x.com)
+             and click Start.
+          c. It scans your manifest, shows a score/checklist — fix
+             anything it flags as missing (usually just icon sizes).
+          d. Click "Package for Stores" -> "Android".
+          e. Fill in package name (e.g. com.upskill10x.app), leave
+             defaults otherwise -> Generate.
+          f. Download the .zip — it contains a ready-to-sign APK/AAB
+             plus a "Digital Asset Links" file
+             (assetlinks.json) — see step 3.
+
+     3. Domain verification (required so the app opens without a
+        browser address bar showing):
+          a. From the downloaded package, find assetlinks.json.
+          b. Host it at exactly:
+               https://upskill10x.com/.well-known/assetlinks.json
+             (create a public/.well-known/assetlinks.json file in this
+             project and deploy — Express already serves static files
+             from /public, so this "just works" once deployed.)
+          c. Reinstall/reopen the app — it should now run full-screen
+             with no browser UI.
+
+     4. Install the APK on a test phone: enable "Install unknown apps"
+        for your browser/file manager in Android Settings, transfer the
+        .apk file, tap to install.
+
+     5. Publishing to Google Play (optional, needed for public
+        distribution): you'll need a one-time $25 Google Play Developer
+        account (https://play.google.com/console), then upload the
+        .aab (not .apk) that PWABuilder generated, fill in store
+        listing details, submit for review.
+
+OPTION B — CAPACITOR (more control, bigger app, native shell)
+   Best if: you plan to add native features later (push notifications,
+   downloads, biometric login, etc.) beyond what a website can do.
+
+   PREREQUISITES
+     - Node.js (already installed for this project)
+     - Android Studio: https://developer.android.com/studio
+
+   STEPS
+     1. In a NEW folder (not this project's server code — this wraps
+        the deployed website, not the source):
+          npm init -y
+          npm install @capacitor/core @capacitor/android
+          npx cap init "Upskill10x" "com.upskill10x.app" --web-dir="www"
+
+     2. Since your app is a live website, not local files, point
+        Capacitor at your live URL instead of bundling files. Create a
+        minimal www/index.html that just redirects, OR configure
+        capacitor.config.json to load the remote URL directly:
+
+          {
+            "appId": "com.upskill10x.app",
+            "appName": "Upskill10x",
+            "webDir": "www",
+            "server": {
+              "url": "https://upskill10x.com",
+              "cleartext": false
+            }
+          }
+
+     3. Add the Android platform and open it in Android Studio:
+          npx cap add android
+          npx cap open android
+
+     4. In Android Studio: Build -> Generate Signed Bundle / APK ->
+        follow the wizard (create a new keystore the first time — SAVE
+        this keystore file and its passwords somewhere safe, you need
+        the SAME one for every future update or Google Play will
+        reject it).
+
+     5. The signed .apk lands in
+        android/app/release/app-release.apk — install it on a test
+        device the same way as Option A step 4.
+
+WHICH SHOULD YOU PICK RIGHT NOW?
+   Start with Option A (PWABuilder/TWA) — it takes under an hour, needs
+   no Android/Java knowledge, and gives you a working installable app
+   backed by your live Render deployment. Only move to Capacitor later
+   if you specifically need native device features the browser can't do.
+
+NOTE ON VIDEO PLAYBACK IN THE APK
+   Both options just open your live website inside an app shell, so
+   the encrypted HLS video setup (see video-conversion-and-upload.txt)
+   keeps working exactly the same way — nothing extra to configure for
+   video specifically.

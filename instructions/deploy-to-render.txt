@@ -1,0 +1,144 @@
+UPSKILL10X — DEPLOYING TO RENDER (FREE TIER)
+=================================================
+
+IMPORTANT CAVEAT — READ FIRST
+   Render's FREE web services do not include a persistent disk. Your
+   SQLite database file will reset to empty (re-seeded with just your
+   admin account + 5 placeholder modules) every time you:
+     - push a new deploy, OR
+     - the service spins down from 15 minutes of inactivity and then
+       spins back up (this does NOT always wipe it, but don't rely on
+       it surviving — treat every restart as a possible reset).
+   This is fine for testing/demoing. Before you take real student
+   payments long-term, upgrade to the "Starter" plan (~$7/month) and
+   attach a small persistent disk (~$0.25/month for 1GB) — see the
+   "GOING TO A PAID PLAN LATER" section at the bottom. No code changes
+   are needed to upgrade, just a dashboard toggle.
+
+-----------------------------------------------------------------
+STEP 1 — PUSH YOUR CODE TO GITHUB
+-----------------------------------------------------------------
+   1. Create a new (private is fine) GitHub repository.
+   2. From inside the upskill10x folder:
+        git init
+        git add .
+        git commit -m "Initial commit"
+        git branch -M main
+        git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+        git push -u origin main
+   NOTE: .env is already in .gitignore — never commit it. Render uses
+   its own environment variable dashboard instead (Step 3).
+
+-----------------------------------------------------------------
+STEP 2 — CREATE THE WEB SERVICE ON RENDER
+-----------------------------------------------------------------
+   1. Go to https://render.com and sign up / log in (GitHub login is
+      easiest since it can read your repos directly).
+   2. Click "New +" -> "Web Service".
+   3. Connect your GitHub account if you haven't, then select the repo
+      you just pushed.
+   4. Fill in:
+        Name:            upskill10x  (or anything you like)
+        Region:           pick one close to your users (e.g. Singapore
+                          for India)
+        Branch:           main
+        Runtime:          Node
+        Build Command:    npm install
+        Start Command:    npm run db:init && npm start
+        Instance Type:    Free
+   5. Click "Create Web Service" — don't worry, it will fail to start
+      until you add environment variables in the next step. That's
+      expected.
+
+   ALTERNATIVE: if you'd rather not click through the form, Render can
+   read the render.yaml file already included in this project — choose
+   "New +" -> "Blueprint" instead of "Web Service" and point it at your
+   repo. It sets most of this up automatically, you'll still need to
+   fill in the secret values in Step 3.
+
+-----------------------------------------------------------------
+STEP 3 — SET ENVIRONMENT VARIABLES
+-----------------------------------------------------------------
+   In your new service, go to the "Environment" tab and add these
+   (use "Generate" for JWT_SECRET if Render offers it, or generate it
+   yourself first):
+
+     NODE_ENV              = production
+     DATABASE_PATH         = ./data/upskill10x.db
+     JWT_SECRET             = <a long random string>
+     JWT_EXPIRES_IN         = 30d
+     ADMIN_EMAIL             = you@example.com
+     ADMIN_PASSWORD          = <a real password>
+     ADMIN_NAME              = Upskill10x Admin
+     FULL_PRICE              = 9999
+     COUPON_PRICE            = 999
+     RAZORPAY_KEY_ID         = <from Razorpay, see razorpay-setup.txt>
+     RAZORPAY_KEY_SECRET      = <from Razorpay>
+     RAZORPAY_WEBHOOK_SECRET  = <from Razorpay>
+
+   To generate JWT_SECRET locally:
+     node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+
+   Click "Save Changes" — this triggers a redeploy automatically.
+
+-----------------------------------------------------------------
+STEP 4 — WAIT FOR DEPLOY, THEN TEST
+-----------------------------------------------------------------
+   1. Watch the "Logs" tab. You should eventually see:
+        "✔ Schema applied."
+        "✔ Admin account created: you@example.com"
+        "✔ Seeded 5 modules x 5 videos (placeholders)."
+        "Upskill10x running at http://localhost:10000" (port doesn't
+        matter, Render maps it automatically)
+   2. Render gives you a free URL like:
+        https://upskill10x.onrender.com
+   3. Visit it, click through the same test flow described in
+      local-testing.txt (Apply -> Approve in /admin -> Register -> Pay
+      with coupon -> LMS). Use Razorpay TEST mode keys until you're
+      ready to go live (see razorpay-setup.txt).
+
+-----------------------------------------------------------------
+STEP 5 — RAZORPAY WEBHOOK URL (do this after you have your Render URL)
+-----------------------------------------------------------------
+   In the Razorpay Dashboard, when you set up the webhook (see
+   razorpay-setup.txt), use:
+        https://upskill10x.onrender.com/api/webhook/razorpay
+   (Note: this project verifies payments synchronously via
+   /api/verify-payment when checkout completes, which is enough for
+   most small LMS setups. A webhook route is optional extra insurance
+   for payments where the browser tab was closed before verification —
+   ask if you want that route added.)
+
+-----------------------------------------------------------------
+STEP 6 — CUSTOM DOMAIN (OPTIONAL)
+-----------------------------------------------------------------
+   1. In your Render service -> "Settings" -> "Custom Domains" -> Add.
+   2. Enter your domain (e.g. upskill10x.com).
+   3. Render gives you a CNAME/A record to add at your domain
+      registrar (GoDaddy, Namecheap, Cloudflare, etc.) — add it there.
+   4. Wait for DNS to propagate (a few minutes to a few hours) and for
+      Render to auto-issue a free TLS certificate.
+   5. Your admin panel is then reachable at:
+        https://upskill10x.com/admin
+
+-----------------------------------------------------------------
+GOING TO A PAID PLAN LATER (recommended before real launch)
+-----------------------------------------------------------------
+   1. Service -> "Settings" -> "Instance Type" -> switch Free to
+      "Starter" (~$7/month). This also removes the 15-minute spin-down.
+   2. Service -> "Disks" -> "Add Disk":
+        Name:       upskill10x-data
+        Mount Path: /var/data
+        Size:       1 GB (plenty for SQLite + metadata; ~$0.25/month)
+   3. Update the DATABASE_PATH environment variable to:
+        /var/data/upskill10x.db
+   4. Save -> Render redeploys. From now on your database survives
+      deploys and restarts.
+   5. IMPORTANT: since you were on the free tier before, your existing
+      data was already ephemeral — there's nothing to "migrate", you're
+      just starting to persist from this point forward.
+
+REDEPLOYING AFTER CODE CHANGES
+   Just `git push` to your main branch — Render auto-deploys on every
+   push by default (you can turn this off in Settings if you'd rather
+   deploy manually by clicking "Manual Deploy").

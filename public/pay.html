@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Checkout — Upskill10x</title>
+<meta name="theme-color" content="#0056d2">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+body{background:var(--bg-2);min-height:100vh}
+.co-head{background:#fff;border-bottom:1px solid var(--line-2)}
+.co-head .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1040px}
+.co-head img{height:28px}
+.secure{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:var(--green)}
+.co{max-width:1040px;margin:0 auto;padding:32px 20px 60px;display:grid;grid-template-columns:1fr 400px;gap:28px;align-items:start}
+.co h1{font-size:28px;margin-bottom:6px}
+.co .lead{color:var(--muted);margin-bottom:22px}
+.panel{background:#fff;border:1px solid var(--line-2);border-radius:20px;padding:24px}
+.panel h2{font-size:17px;margin-bottom:16px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.coupon-row{display:flex;gap:10px}
+.coupon-row .input{text-transform:uppercase}
+.coupon-row .input::placeholder{text-transform:none}
+.coupon-msg{font-size:13px;font-weight:600;margin-top:8px;display:none}
+.coupon-msg.ok{display:block;color:var(--green)}
+.coupon-msg.bad{display:block;color:#dc2626}
+.sum{position:sticky;top:20px}
+.sum-item{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.sum-thumb{width:96px;flex-shrink:0}
+.sum-thumb .thumb{border-radius:10px}
+.sum-thumb .thumb-art svg{width:40%}
+.bundle-art{width:96px;aspect-ratio:16/9;border-radius:10px;background:linear-gradient(135deg,var(--orange-600),var(--blue-700));display:flex;align-items:center;justify-content:center;font-size:26px}
+.sum-item b{display:block;font-size:15.5px;line-height:1.3}
+.sum-item span{font-size:12.5px;color:var(--muted)}
+.lines{border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:9px;font-size:14.5px}
+.line{display:flex;justify-content:space-between;color:var(--ink-2)}
+.line.save{color:var(--green);font-weight:600}
+.line.total{border-top:1px dashed var(--line-2);padding-top:12px;margin-top:4px;font-size:18px;font-weight:800;color:var(--ink)}
+.pay-btn{margin-top:18px}
+.trust{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:14px;font-size:12px;color:var(--muted);font-weight:600}
+.trust span{display:flex;align-items:center;gap:5px}
+.trust .icon{width:14px;height:14px}
+.upgrade{margin-top:16px;border:1.5px dashed var(--orange-400);background:var(--orange-100);border-radius:14px;padding:14px;font-size:13.5px}
+.upgrade b{color:var(--orange-600)}
+.upgrade a{display:inline-block;margin-top:8px;font-weight:800;color:var(--orange-600);text-decoration:underline;text-underline-offset:3px}
+.result{max-width:520px;margin:60px auto;text-align:center;background:#fff;border:1px solid var(--line-2);border-radius:24px;padding:40px 28px;display:none}
+.result.show{display:block}
+.result .big-ico{width:76px;height:76px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;font-size:36px}
+.result h1{font-size:26px;margin-bottom:8px}
+.result p{color:var(--muted);margin-bottom:22px}
+.result small{display:block;color:var(--muted-2);font-size:12px;margin-top:14px}
+.owned{max-width:520px;margin:60px auto;text-align:center}
+@media (max-width:860px){
+  .co{grid-template-columns:1fr}
+  .sum{position:static}
+}
+@media (max-width:480px){ .grid2{grid-template-columns:1fr} .co h1{font-size:23px} }
+</style>
+</head>
+<body>
+<header class="co-head">
+  <div class="wrap">
+    <a href="/lms"><img src="/assets/logo-wordmark.png" alt="Upskill10x"></a>
+    <span class="secure"><svg class="icon" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Secure checkout</span>
+  </div>
+</header>
+
+<div id="checkoutView" class="co" hidden>
+  <div>
+    <h1>Checkout</h1>
+    <p class="lead">You'll get access right after payment — on the web and in the app.</p>
+    <form class="panel" id="checkoutForm" novalidate>
+      <h2>Your details</h2>
+      <div class="grid2">
+        <div class="field" id="cfName"><label for="chkName">Full name</label><input class="input" id="chkName" autocomplete="name"><span class="err">Enter your name.</span></div>
+        <div class="field" id="cfPhone"><label for="chkPhone">Mobile number</label><input class="input" id="chkPhone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile"><span class="err">Enter a valid 10-digit mobile number.</span></div>
+      </div>
+      <div class="field" id="cfEmail"><label for="chkEmail">Email (your account)</label><input class="input" id="chkEmail" type="email" readonly><span class="err">Enter a valid email.</span></div>
+      <div class="field" style="margin-bottom:0">
+        <label for="chkCoupon">Coupon code</label>
+        <div class="coupon-row"><input class="input" id="chkCoupon" placeholder="Have a code?" autocomplete="off"><button type="button" class="btn btn-ghost" id="applyCouponBtn">Apply</button></div>
+        <div class="coupon-msg" id="couponMsg"></div>
+      </div>
+      <button type="submit" class="sr-only" tabindex="-1">Pay</button>
+    </form>
+  </div>
+
+  <aside class="panel sum">
+    <h2>Order summary</h2>
+    <div class="sum-item" id="sumItem"></div>
+    <div class="lines">
+      <div class="line"><span>Price</span><span id="lnMrp"></span></div>
+      <div class="line save" id="lnDiscountRow"><span>Discount</span><span id="lnDiscount"></span></div>
+      <div class="line save" id="lnCouponRow" hidden><span>Coupon <span id="lnCouponCode"></span></span><span id="lnCoupon"></span></div>
+      <div class="line total"><span>Total</span><span id="lnTotal"></span></div>
+    </div>
+    <div class="alert bad" id="checkoutError" style="margin-top:14px"><span id="checkoutErrorText"></span></div>
+    <button class="btn btn-primary btn-block btn-lg pay-btn" id="payBtn" type="button">Pay</button>
+    <div class="trust">
+      <span><svg class="icon" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5l-8-3Z"/></svg>Razorpay secured</span>
+      <span><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>48-hr refund</span>
+      <span>UPI · Cards · Netbanking</span>
+    </div>
+    <div class="upgrade" id="upgradeBox" hidden></div>
+  </aside>
+</div>
+
+<div class="result" id="successView">
+  <div class="big-ico" style="background:var(--green-50)">🎉</div>
+  <h1>You're in!</h1>
+  <p id="successText">Your purchase is confirmed.</p>
+  <a class="btn btn-primary btn-lg" id="startBtn" href="/lms">Start learning</a>
+  <small id="successRef"></small>
+</div>
+
+<div class="result" id="failView">
+  <div class="big-ico" style="background:#fef2f2">😕</div>
+  <h1>Payment didn't go through</h1>
+  <p id="failText">No money was deducted, or it will be refunded automatically within 5–7 working days.</p>
+  <button class="btn btn-primary btn-lg" id="retryBtn">Try again</button>
+</div>
+
+<div class="owned" id="ownedView" hidden>
+  <div class="result show">
+    <div class="big-ico" style="background:var(--blue-50)">✅</div>
+    <h1 id="ownedTitle">You already own this</h1>
+    <p>It's waiting for you in your learning app.</p>
+    <a class="btn btn-primary btn-lg" id="ownedBtn" href="/lms">Go to my courses</a>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/assets/site.js"></script>
+<script>
+const { esc, rupees, thumb, offPct } = U;
+const params = new URLSearchParams(location.search);
+const ITEM = params.get('item') === 'course' ? 'course' : 'bundle';
+const COURSE = params.get('course');
+const body = { item: ITEM, course: COURSE };
+
+let info = null, coupon = null, total = 0;
+const $ = id => document.getElementById(id);
+
+function render() {
+  const base = info.price;
+  const mrp = info.mrp && info.mrp > base ? info.mrp : base;
+  $('lnMrp').textContent = rupees(mrp);
+  $('lnDiscountRow').hidden = mrp === base;
+  $('lnDiscount').textContent = '−' + rupees(mrp - base);
+  $('lnCouponRow').hidden = !coupon;
+  if (coupon) { $('lnCouponCode').textContent = '(' + coupon.code + ')'; $('lnCoupon').textContent = '−' + rupees(base - coupon.price); }
+  total = coupon ? coupon.price : base;
+  $('lnTotal').textContent = rupees(total);
+  $('payBtn').textContent = `Pay ${rupees(total)}`;
+}
+
+async function init() {
+  let me;
+  try { me = (await U.api('/me')).user; } catch (e) { me = null; }
+  if (!me) { location.href = '/auth?next=' + encodeURIComponent(location.pathname + location.search); return; }
+  try { info = await U.api(`/checkout-item?item=${ITEM}${COURSE ? '&course=' + encodeURIComponent(COURSE) : ''}`); }
+  catch (e) { location.href = '/lms'; return; }
+
+  if (info.owned) {
+    $('ownedView').hidden = false;
+    $('ownedTitle').textContent = me.all_access ? 'You have the All-Access Pass' : 'You already own this course';
+    if (info.course) $('ownedBtn').href = '/lms#course/' + encodeURIComponent(info.course.slug);
+    return;
+  }
+
+  $('checkoutView').hidden = false;
+  $('chkName').value = me.name || '';
+  $('chkEmail').value = me.email || '';
+  $('chkPhone').value = me.phone || '';
+
+  if (ITEM === 'bundle') {
+    $('sumItem').innerHTML = `<div class="bundle-art">🎁</div><div><b>${esc(info.title)}</b><span>All ${info.course_count} courses + every new course · lifetime</span></div>`;
+  } else {
+    const c = info.course;
+    $('sumItem').innerHTML = `<div class="sum-thumb"><div class="thumb">${thumb(c, { tag: false })}</div></div><div><b>${esc(c.title)}</b><span>${c.lesson_count} lessons · lifetime access</span></div>`;
+    if (info.course_count > 1 && info.bundle) {
+      const extra = info.bundle.price - info.price;
+      $('upgradeBox').hidden = false;
+      $('upgradeBox').innerHTML = `Want more than one skill? Get <b>all ${info.course_count} courses</b> for ${extra > 0 ? `just <b>${rupees(extra)}</b> more` : `<b>${rupees(info.bundle.price)}</b>`}.<br><a href="/pay?item=bundle">Switch to ${esc(info.bundle.title)} →</a>`;
+    }
+  }
+  document.title = `Checkout · ${info.title} — Upskill10x`;
+  render();
+}
+
+/* ---------- coupon ---------- */
+$('applyCouponBtn').addEventListener('click', async () => {
+  const code = $('chkCoupon').value.trim();
+  const msg = $('couponMsg');
+  msg.className = 'coupon-msg';
+  if (!code) { msg.className = 'coupon-msg bad'; msg.textContent = 'Enter a coupon code first.'; return; }
+  const btn = $('applyCouponBtn'); btn.disabled = true; btn.textContent = 'Checking…';
+  try {
+    const r = await U.api('/validate-coupon', { method: 'POST', body: JSON.stringify({ ...body, code }) });
+    if (r.valid) { coupon = { code: code.toUpperCase(), price: r.price }; msg.className = 'coupon-msg ok'; msg.textContent = `${r.message || 'Coupon applied.'} You pay ${rupees(r.price)}.`; }
+    else { coupon = null; msg.className = 'coupon-msg bad'; msg.textContent = r.message || 'This coupon is invalid.'; }
+  } catch (e) { coupon = null; msg.className = 'coupon-msg bad'; msg.textContent = e.message; }
+  btn.disabled = false; btn.textContent = 'Apply';
+  render();
+});
+$('chkCoupon').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('applyCouponBtn').click(); } });
+
+/* ---------- pay ---------- */
+const valid = (id, ok) => { $(id).classList.toggle('invalid', !ok); return ok; };
+function showError(m) { $('checkoutErrorText').textContent = m; $('checkoutError').classList.add('show'); }
+function resetBtn() { $('payBtn').disabled = false; render(); }
+
+$('checkoutForm').addEventListener('submit', e => { e.preventDefault(); $('payBtn').click(); });
+$('payBtn').addEventListener('click', async () => {
+  $('checkoutError').classList.remove('show');
+  const name = $('chkName').value.trim();
+  const phone = $('chkPhone').value.replace(/\D/g, '').slice(-10);
+  const email = $('chkEmail').value.trim();
+  const ok = [valid('cfName', name.length > 1), valid('cfPhone', /^[6-9]\d{9}$/.test(phone))].every(Boolean);
+  if (!ok) { document.querySelector('.field.invalid input').focus(); return; }
+
+  const btn = $('payBtn'); btn.disabled = true; btn.textContent = 'Preparing payment…';
+  try {
+    const order = await U.api('/create-order', { method: 'POST', body: JSON.stringify({ ...body, name, email, phone, coupon: coupon && coupon.code }) });
+    if (typeof Razorpay === 'undefined') throw new Error('The payment window could not load. Check your connection and try again.');
+    const rzp = new Razorpay({
+      key: order.key_id,
+      amount: order.amount,
+      currency: order.currency || 'INR',
+      name: 'Upskill10x',
+      description: order.label,
+      image: location.origin + '/assets/icon-192.png',
+      order_id: order.id,
+      prefill: { name, email, contact: phone },
+      theme: { color: '#0056d2' },
+      handler: (resp) => verify(resp),
+      modal: { ondismiss: resetBtn }
+    });
+    rzp.on('payment.failed', r => showFail(r.error && r.error.description));
+    rzp.open();
+  } catch (e) {
+    resetBtn();
+    showError(e.message || 'Could not start the payment. Please try again.');
+  }
+});
+
+async function verify(resp) {
+  $('payBtn').textContent = 'Confirming payment…';
+  try {
+    const r = await U.api('/verify-payment', { method: 'POST', body: JSON.stringify(resp) });
+    if (!r.verified) throw new Error(r.message);
+    $('checkoutView').hidden = true;
+    $('successView').classList.add('show');
+    $('successText').textContent = ITEM === 'bundle'
+      ? `${info.title} is active — every course is unlocked.`
+      : `${info.course.title} is unlocked. Happy learning!`;
+    $('startBtn').href = ITEM === 'bundle' ? '/lms#courses' : '/lms#course/' + encodeURIComponent(info.course.slug);
+    $('successRef').textContent = 'Payment ID: ' + resp.razorpay_payment_id;
+  } catch (e) {
+    showFail(e.message || 'We could not confirm your payment yet. If money was deducted, access will be added automatically within a few minutes.');
+  }
+}
+function showFail(reason) {
+  $('checkoutView').hidden = true;
+  $('failView').classList.add('show');
+  if (reason) $('failText').textContent = reason;
+}
+$('retryBtn').addEventListener('click', () => { $('failView').classList.remove('show'); $('checkoutView').hidden = false; resetBtn(); });
+
+init();
+</script>
+</body>
+</html>

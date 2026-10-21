@@ -1,0 +1,25 @@
+{
+  "name": "Upskill10x",
+  "short_name": "Upskill10x",
+  "description": "Upskill10x \u2014 learn practical skills in marketing, design, video and data",
+  "start_url": "/auth",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0056d2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

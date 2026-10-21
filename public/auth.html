@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sign in — Upskill10x</title>
+<meta name="theme-color" content="#0056d2">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+body{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;background:var(--bg)}
+.side{background:linear-gradient(150deg,var(--blue-900),var(--blue-700) 70%,var(--blue-600));color:#fff;padding:44px 52px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+.side::before{content:'';position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:rgba(255,255,255,.07)}
+.side::after{content:'';position:absolute;left:-90px;bottom:-140px;width:320px;height:320px;border-radius:50%;background:rgba(249,115,22,.18)}
+.side-logo{background:#fff;border-radius:14px;padding:10px 14px;align-self:flex-start;position:relative;z-index:1}
+.side-logo img{height:28px}
+.side-body{margin:auto 0;position:relative;z-index:1;max-width:460px}
+.side h2{font-size:clamp(30px,3vw,40px);margin-bottom:14px}
+.side p{color:#d5e1f5;font-size:16px;margin-bottom:26px}
+.perks{list-style:none;display:flex;flex-direction:column;gap:14px}
+.perks li{display:flex;gap:12px;align-items:center;font-weight:600}
+.perks i{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:17px;flex-shrink:0}
+.side-quote{position:relative;z-index:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:16px;font-size:14px;color:#e6eefb}
+.side-quote b{display:block;margin-top:8px;color:#fff;font-size:13px}
+
+.main{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
+.card{width:100%;max-width:420px}
+.m-logo{display:none;margin:0 auto 26px}
+.m-logo img{height:30px}
+.card h1{font-size:28px;margin-bottom:6px}
+.card .sub{color:var(--muted);margin-bottom:24px}
+.tabs{display:flex;background:var(--bg-3);border-radius:14px;padding:4px;margin-bottom:24px;position:relative}
+.tab{flex:1;padding:11px;border-radius:11px;font-weight:700;font-size:14.5px;color:var(--muted);position:relative;z-index:1;transition:color .2s}
+.tab.active{color:var(--ink)}
+.tab-pill{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:#fff;border-radius:11px;box-shadow:var(--shadow-1);transition:transform .3s var(--ease)}
+.tabs[data-active="register"] .tab-pill{transform:translateX(100%)}
+form{display:none}
+form.active{display:block;animation:fade .3s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pw-wrap{position:relative}
+.pw-wrap .input{padding-right:46px}
+.pw-toggle{position:absolute;right:6px;top:6px;width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.pw-toggle:hover{background:var(--bg-2)}
+.switch{text-align:center;margin-top:18px;font-size:14px;color:var(--muted)}
+.switch a{color:var(--blue-700);font-weight:700}
+.back{position:absolute;top:20px;right:24px;font-size:14px;font-weight:600;color:var(--muted)}
+.back:hover{color:var(--blue-700)}
+.next-note{display:none;background:var(--orange-100);color:var(--orange-600);border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;margin-bottom:18px}
+.next-note.show{display:block}
+.legal{font-size:12px;color:var(--muted-2);text-align:center;margin-top:16px}
+.legal a{text-decoration:underline}
+
+/* App splash (Capacitor) */
+.splash{position:fixed;inset:0;z-index:100;background:#fff;display:none;align-items:center;justify-content:center;flex-direction:column;gap:18px}
+.splash.show{display:flex}
+.splash img{width:96px;animation:rise .9s var(--ease) both}
+.splash .wm{height:30px;width:auto;animation:fadeup .6s .45s var(--ease) both}
+.splash.out{opacity:0;transition:opacity .35s}
+@keyframes rise{from{opacity:0;transform:translateY(30px) scale(.8)}to{opacity:1;transform:none}}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+@media (max-width:900px){
+  body{grid-template-columns:1fr}
+  .side{display:none}
+  .m-logo{display:block}
+  .main{justify-content:flex-start;padding-top:56px}
+}
+</style>
+</head>
+<body>
+<div class="splash" id="splash"><img src="/assets/mark.png" alt=""><img class="wm" src="/assets/logo-wordmark.png" alt="Upskill10x"></div>
+
+<aside class="side">
+  <a href="/" class="side-logo"><img src="/assets/logo-wordmark.png" alt="Upskill10x"></a>
+  <div class="side-body">
+    <h2>Learn. Grow. Achieve 10x.</h2>
+    <p>One account for every course — on the web and in the Upskill10x app.</p>
+    <ul class="perks">
+      <li><i>🎬</i>Free preview lessons on every course</li>
+      <li><i>🔥</i>Streaks and progress that keep you going</li>
+      <li><i>💬</i>Community and doubt support</li>
+      <li><i>💼</i>Live jobs board for learners</li>
+    </ul>
+  </div>
+  <div class="side-quote">“The freelancing module changed my life. I now manage social media for 3 local businesses.”<b>Rajesh Kumar · Jaipur</b></div>
+</aside>
+
+<main class="main" style="position:relative">
+  <a href="/" class="back" id="backLink">← Back to courses</a>
+  <div class="card">
+    <a href="/" class="m-logo"><img src="/assets/logo-wordmark.png" alt="Upskill10x"></a>
+    <h1 id="heading">Welcome back</h1>
+    <p class="sub" id="subheading">Log in to continue learning.</p>
+    <div class="next-note" id="nextNote">Log in or create an account to finish your purchase.</div>
+
+    <div class="tabs" id="tabs" data-active="login">
+      <span class="tab-pill"></span>
+      <button class="tab active" data-tab="login" type="button">Log in</button>
+      <button class="tab" data-tab="register" type="button">Sign up</button>
+    </div>
+
+    <div class="alert bad" id="authError"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg><span id="authErrorText"></span></div>
+
+    <form id="loginForm" class="active" novalidate>
+      <div class="field" id="lfEmail"><label for="loginEmail">Email</label><input class="input" type="email" id="loginEmail" autocomplete="email" placeholder="you@example.com"><span class="err">Enter a valid email.</span></div>
+      <div class="field" id="lfPassword"><label for="loginPassword">Password</label>
+        <div class="pw-wrap"><input class="input" type="password" id="loginPassword" autocomplete="current-password" placeholder="Your password"><button type="button" class="pw-toggle" data-toggle-pw="loginPassword" aria-label="Show password"><svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <span class="err">Enter your password.</span></div>
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Log in</button>
+      <p class="switch">New here? <a href="#" data-switch-to="register">Create a free account</a></p>
+    </form>
+
+    <form id="registerForm" novalidate>
+      <div class="field" id="rfName"><label for="regName">Full name</label><input class="input" type="text" id="regName" autocomplete="name" placeholder="Your name"><span class="err">Enter your name.</span></div>
+      <div class="field" id="rfEmail"><label for="regEmail">Email</label><input class="input" type="email" id="regEmail" autocomplete="email" placeholder="you@example.com"><span class="err">Enter a valid email.</span></div>
+      <div class="field" id="rfPhone"><label for="regPhone">Mobile number</label><input class="input" type="tel" id="regPhone" autocomplete="tel" inputmode="numeric" placeholder="10-digit mobile"><span class="err">Enter a valid 10-digit Indian mobile number.</span></div>
+      <div class="field" id="rfPassword"><label for="regPassword">Password</label>
+        <div class="pw-wrap"><input class="input" type="password" id="regPassword" autocomplete="new-password" placeholder="At least 6 characters"><button type="button" class="pw-toggle" data-toggle-pw="regPassword" aria-label="Show password"><svg class="icon" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+        <span class="err">Use at least 6 characters.</span></div>
+      <button class="btn btn-primary btn-block btn-lg" type="submit">Create account</button>
+      <p class="switch">Already have an account? <a href="#" data-switch-to="login">Log in</a></p>
+      <p class="legal">By signing up you agree to our <a href="/privacy">privacy policy</a>.</p>
+    </form>
+  </div>
+</main>
+
+<script src="/assets/site.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+// Only allow same-site checkout redirects.
+const nextUrl = (params.get('next') || '').startsWith('/pay') ? params.get('next') : '/lms';
+if (nextUrl !== '/lms') document.getElementById('nextNote').classList.add('show');
+
+/* App: short splash, and no "back to courses" link (the app starts here). */
+if (U.isApp()) {
+  const sp = document.getElementById('splash');
+  sp.classList.add('show');
+  document.getElementById('backLink').style.display = 'none';
+  setTimeout(() => { sp.classList.add('out'); setTimeout(() => sp.remove(), 400); }, 1600);
+}
+
+const COPY = {
+  login: ['Welcome back', 'Log in to continue learning.'],
+  register: ['Create your account', 'Free to join — watch previews and buy when you\'re ready.']
+};
+const tabsEl = document.getElementById('tabs');
+const forms = { login: document.getElementById('loginForm'), register: document.getElementById('registerForm') };
+const errBox = document.getElementById('authError');
+function switchTab(tab) {
+  tabsEl.dataset.active = tab;
+  tabsEl.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  Object.entries(forms).forEach(([k, f]) => f.classList.toggle('active', k === tab));
+  document.getElementById('heading').textContent = COPY[tab][0];
+  document.getElementById('subheading').textContent = COPY[tab][1];
+  errBox.classList.remove('show');
+  document.title = (tab === 'login' ? 'Log in' : 'Sign up') + ' — Upskill10x';
+}
+tabsEl.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+document.querySelectorAll('[data-switch-to]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); switchTab(a.dataset.switchTo); }));
+if (params.get('tab') === 'register') switchTab('register');
+
+document.querySelectorAll('[data-toggle-pw]').forEach(btn => btn.addEventListener('click', () => {
+  const input = document.getElementById(btn.dataset.togglePw);
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  btn.querySelector('svg').innerHTML = show
+    ? '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.6 18.6 0 0 1 5.06-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 11 7 11 7a18.6 18.6 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/>'
+    : '<path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/>';
+}));
+
+const valid = (id, ok) => { document.getElementById(id).classList.toggle('invalid', !ok); return ok; };
+const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function showErr(msg) { document.getElementById('authErrorText').textContent = msg; errBox.classList.add('show'); }
+function firstInvalid(form) { const f = form.querySelector('.field.invalid input'); if (f) f.focus(); }
+
+async function submit(form, path, body, btnText) {
+  const btn = form.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Please wait…';
+  try {
+    await U.api(path, { method: 'POST', body: JSON.stringify(body) });
+    location.href = nextUrl;
+  } catch (e) { showErr(e.message); btn.disabled = false; btn.textContent = btnText; }
+}
+
+forms.login.addEventListener('submit', e => {
+  e.preventDefault(); errBox.classList.remove('show');
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw = document.getElementById('loginPassword').value;
+  const ok = [valid('lfEmail', emailRe.test(email)), valid('lfPassword', pw.length > 0)].every(Boolean);
+  if (!ok) return firstInvalid(forms.login);
+  submit(forms.login, '/login', { email, password: pw }, 'Log in');
+});
+
+forms.register.addEventListener('submit', e => {
+  e.preventDefault(); errBox.classList.remove('show');
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.replace(/\D/g, '').slice(-10);
+  const pw = document.getElementById('regPassword').value;
+  const ok = [valid('rfName', name.length > 1), valid('rfEmail', emailRe.test(email)), valid('rfPhone', /^[6-9]\d{9}$/.test(phone)), valid('rfPassword', pw.length >= 6)].every(Boolean);
+  if (!ok) return firstInvalid(forms.register);
+  submit(forms.register, '/register', { name, email, phone, password: pw }, 'Create account');
+});
+</script>
+</body>
+</html>

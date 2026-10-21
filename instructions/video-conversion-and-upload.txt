@@ -1,0 +1,177 @@
+UPSKILL10X — CONVERTING & UPLOADING VIDEOS (FFmpeg + Cloudflare R2)
+=======================================================================
+This turns a normal video file (e.g. lesson1.mp4) into encrypted HLS
+(.m3u8 + .ts segments) that streams instead of downloads, and that
+only enrolled students who've unlocked that module can actually play.
+
+HOW THE PROTECTION WORKS (read this once)
+   - The video is chopped into small .ts segments and encrypted with
+     AES-128.
+   - The .m3u8 "manifest" file lists the segments AND a URL where the
+     player should fetch the decryption key.
+   - The .m3u8 + .ts files sit on Cloudflare R2 and are PUBLIC — but
+     they're useless without the key.
+   - The key itself is served by YOUR server at
+     /api/lms/videos/:id/key, which only responds if the request comes
+     from a logged-in, enrolled student whose progress has unlocked
+     that module. This is same-origin, so the browser sends the login
+     cookie automatically — no extra config needed.
+   - This isn't unbreakable DRM (nothing browser-based truly is), but
+     it stops casual downloading/link-sharing, which is what you asked
+     for.
+
+-----------------------------------------------------------------
+PART 1 — INSTALL FFMPEG
+-----------------------------------------------------------------
+   Mac (using Homebrew — install Homebrew first from https://brew.sh
+   if you don't have it):
+        brew install ffmpeg
+
+   Windows:
+        1. Go to https://www.gyan.dev/ffmpeg/builds/ (a trusted FFmpeg
+           Windows build source).
+        2. Download the "release essentials" zip.
+        3. Unzip it somewhere permanent, e.g. C:\ffmpeg
+        4. Add C:\ffmpeg\bin to your PATH:
+             Search "Environment Variables" in Start Menu -> Edit the
+             system environment variables -> Environment Variables ->
+             under "System variables" find "Path" -> Edit -> New ->
+             paste C:\ffmpeg\bin -> OK everywhere.
+        5. Open a NEW Command Prompt and check:
+             ffmpeg -version
+
+   Linux (Debian/Ubuntu):
+        sudo apt update && sudo apt install ffmpeg
+
+   Confirm it worked (all platforms):
+        ffmpeg -version
+
+-----------------------------------------------------------------
+PART 2 — CREATE THE VIDEO ENTRY IN THE ADMIN PANEL FIRST
+-----------------------------------------------------------------
+   You need the video's database ID BEFORE converting, because the key
+   URL baked into the .m3u8 file includes that ID.
+
+   1. Log into https://YOUR-DOMAIN/admin
+   2. Go to "Modules & Videos".
+   3. Find the module this video belongs to, click "+ Video".
+   4. Type just the title (e.g. "Lesson 1: What is Digital Marketing?"),
+      leave the rest blank, click Save.
+   5. You'll see it listed as: "Lesson 1: What is Digital Marketing?
+      (Video ID: 7)" — write down that number (7 in this example).
+
+-----------------------------------------------------------------
+PART 3 — CONVERT THE VIDEO TO ENCRYPTED HLS
+-----------------------------------------------------------------
+   Do this in a folder on your computer, e.g. Desktop/video-work/
+
+   1. Put your source video there, e.g. lesson1.mp4
+
+   2. Generate a random 16-byte encryption key:
+        openssl rand 16 > enc.key
+      (Mac/Linux: openssl is built in. Windows: use Git Bash, which
+      ships with openssl, or WSL.)
+
+   3. Create a file called enc.keyinfo (plain text, no extension
+      tricks — just name it exactly "enc.keyinfo") with these lines.
+      Replace YOUR-DOMAIN and 7 with your real domain and the Video ID
+      from Part 2:
+
+        https://YOUR-DOMAIN/api/lms/videos/7/key
+        enc.key
+
+      (Line 1 is the URL written into the .m3u8 manifest so the player
+      knows where to fetch the key at playback time. Line 2 is the
+      local key file ffmpeg reads to actually do the encryption now.)
+
+   4. Run the conversion. This example makes one 720p rendition; see
+      the note below for multiple qualities.
+
+        ffmpeg -i lesson1.mp4 -vf "scale=-2:720" -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -c:a aac -b:a 128k -hls_time 6 -hls_key_info_file enc.keyinfo -hls_playlist_type vod -hls_segment_filename "segment_%03d.ts" master.m3u8
+
+      This produces: master.m3u8, segment_000.ts, segment_001.ts, ...
+
+   5. (Optional but recommended) Generate a thumbnail image from the
+      video to use as the thumbnail URL in the admin panel:
+        ffmpeg -i lesson1.mp4 -ss 00:00:03 -vframes 1 thumbnail.jpg
+
+   OPTIONAL — multiple quality levels (adaptive bitrate):
+      Repeat step 4 with different -vf scale and -b:a/-crf settings for
+      1080p/720p/480p into separate .m3u8 files, then write one small
+      master.m3u8 by hand listing all three as #EXT-X-STREAM-INF
+      variants. This is optional — a single 720p rendition (the
+      command above) is perfectly fine for a course platform and much
+      simpler to manage manually with one instructor.
+
+-----------------------------------------------------------------
+PART 4 — SET UP YOUR CLOUDFLARE R2 BUCKET (one-time setup)
+-----------------------------------------------------------------
+   1. Go to https://dash.cloudflare.com -> R2 (left sidebar). Enable R2
+      if you haven't (free tier: 10GB storage, no charge for bandwidth
+      out, which matters a lot for video).
+   2. Click "Create bucket". Name it e.g. upskill10x-videos.
+   3. Connect a custom domain so your video URLs are clean and served
+      fast through Cloudflare's CDN:
+        Bucket -> Settings -> Custom Domains -> Connect Domain
+        Enter something like videos.YOUR-DOMAIN.com
+        Follow the DNS steps it gives you (adds a CNAME record).
+      (No domain yet? Temporarily enable Settings -> "Public
+      Development URL" instead. Switch to a custom domain before going
+      live — r2.dev URLs are rate-limited.)
+   4. Set CORS so browsers on your app's domain can fetch the manifest
+      and segments from R2's different origin:
+        Bucket -> Settings -> CORS Policy -> Add:
+          AllowedOrigins: https://YOUR-DOMAIN  (add http://localhost:3000 too while testing)
+          AllowedMethods: GET, HEAD
+          AllowedHeaders: *
+          MaxAgeSeconds: 3600
+
+-----------------------------------------------------------------
+PART 5 — UPLOAD THE FILES (manual, no AWS CLI needed)
+-----------------------------------------------------------------
+   1. In your bucket, create a folder per video to keep things tidy,
+      e.g.: videos/7/  (using the Video ID from Part 2)
+   2. Open that folder -> "Upload" -> drag in:
+        master.m3u8
+        segment_000.ts, segment_001.ts, ... (all of them)
+        thumbnail.jpg (if you made one)
+   3. Once uploaded, click master.m3u8 in the file list -> copy its
+      Public URL. It'll look like:
+        https://videos.YOUR-DOMAIN.com/videos/7/master.m3u8
+      or, if using the dev URL:
+        https://pub-xxxxxxxx.r2.dev/videos/7/master.m3u8
+
+-----------------------------------------------------------------
+PART 6 — FINISH SETTING UP THE VIDEO IN THE ADMIN PANEL
+-----------------------------------------------------------------
+   1. Base64-encode your enc.key file so you can paste it as text:
+        Mac/Linux:            base64 -i enc.key
+        Windows (Git Bash):   base64 enc.key
+        Windows (PowerShell): [Convert]::ToBase64String([IO.File]::ReadAllBytes("enc.key"))
+      Copy the output (one long line of text).
+   2. Go to /admin -> Modules & Videos -> find your video (ID 7) -> Edit.
+   3. Fill in:
+        HLS URL:        https://videos.YOUR-DOMAIN.com/videos/7/master.m3u8
+        Thumbnail URL:  https://videos.YOUR-DOMAIN.com/videos/7/thumbnail.jpg
+        Encryption key: <the base64 string from step 1>
+   4. Save.
+   5. Log in as a test student who has that module unlocked, go to
+      Learning, click the video — it should play. If it doesn't:
+        - Open browser DevTools -> Network tab, reload the video page.
+        - Check master.m3u8 loads with a 200 status — if not, check the
+          R2 URL and CORS settings (Part 4).
+        - Check the request to /api/lms/videos/7/key returns 200 (not
+          403/404) — 403 means the module isn't actually unlocked for
+          that test student yet (finish the previous module's videos
+          first); 404 means the encryption key field is empty in the
+          admin panel, or the video ID in enc.keyinfo didn't match.
+
+-----------------------------------------------------------------
+DOING THIS FOR ALL 25 STARTER VIDEOS (5 modules x 5 videos)
+-----------------------------------------------------------------
+   Repeat Parts 2-3-5-6 for each video, changing the Video ID each time
+   (whatever ID the admin panel assigns) and the folder name in R2
+   (videos/<id>/). It's repetitive but mechanical — once you've done
+   one end-to-end, the rest are copy-paste with different numbers. If
+   you add more modules/videos later, the exact same process applies —
+   nothing in the system has a hardcoded limit on module or video count.

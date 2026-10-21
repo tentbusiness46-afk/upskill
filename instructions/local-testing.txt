@@ -1,0 +1,105 @@
+UPSKILL10X — RUNNING IT LOCALLY (FOR TESTING)
+=================================================
+
+1) INSTALL PREREQUISITES
+   - Install Node.js version 18 or newer: https://nodejs.org
+   - Confirm it worked:
+       node -v
+       npm -v
+
+2) GET THE PROJECT ON YOUR MACHINE
+   - Unzip the project folder, or `cd` into it if you already have it.
+       cd upskill10x
+
+3) INSTALL DEPENDENCIES
+       npm install
+
+4) CREATE YOUR .env FILE
+   - Copy the example file:
+       cp .env.example .env
+   - Open .env in a text editor and fill in:
+       JWT_SECRET        -> run: node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+                             and paste the output in
+       ADMIN_EMAIL        -> the email you'll use to log into /admin
+       ADMIN_PASSWORD      -> a real password, change this later
+       RAZORPAY_KEY_ID     -> from Razorpay TEST mode (see razorpay-setup.txt)
+       RAZORPAY_KEY_SECRET -> from Razorpay TEST mode
+   - You can leave R2_* and SMTP_* blank for now — they aren't required
+     for the server to run, only for uploading real videos / sending
+     real emails later.
+
+5) CREATE THE DATABASE
+       npm run db:init
+   This creates ./data/upskill10x.db, creates your admin account, and
+   seeds 5 placeholder modules with 5 placeholder videos each.
+
+6) START THE SERVER
+       npm start
+   You should see: "Upskill10x running at http://localhost:3000"
+
+   For auto-restart on file changes while you're developing, use:
+       npm run dev
+
+7) TEST THE FULL FLOW IN YOUR BROWSER
+
+   A) Marketing site
+      Visit http://localhost:3000 — this is index.html.
+
+   B) Selection-round application flow
+      - Click "Apply For Selection Round" -> fills out pwys.html -> submit.
+      - Go to http://localhost:3000/admin (log in with your ADMIN_EMAIL /
+        ADMIN_PASSWORD from step 4).
+      - Click "Applications" tab -> find your test application -> click
+        "Approve & Issue Coupon". A popup shows the generated coupon code
+        (looks like EDGE-A1B2C3). Copy it.
+      - Click "Mark Emailed" (in real use you'd actually email it to them
+        first — see below).
+
+   C) Register + pay with the coupon
+      - Go back to http://localhost:3000, click "Enroll Now".
+      - Register a NEW account (different email than admin).
+      - You'll land on pay.html. Enter the coupon code from step B in the
+        coupon box -> it should show the discounted price (Rs 999).
+      - Click pay. Razorpay's checkout will open.
+      - IMPORTANT: while RAZORPAY_KEY_ID/SECRET are TEST keys, use
+        Razorpay's official test card to "pay":
+            Card number: 4111 1111 1111 1111
+            Expiry:      any future date
+            CVV:         any 3 digits
+            OTP:         1234 (if asked)
+      - On success you land on the "payment successful" screen -> click
+        "Go to Dashboard" -> you're in the LMS.
+
+   D) Explore the LMS
+      - Learning tab: Module 1 is unlocked, others are locked (grey/dimmed).
+        Videos have no hls_url yet (placeholders) so they'll show
+        "Video not uploaded yet" — that's expected until you upload real
+        videos (see video-conversion-and-upload.txt).
+      - Community tab: post a question, then open it and reply.
+      - Account tab: shows your name/email/enrollment date.
+      - Log out (sidebar button) -> you should be bounced to index.html
+        and NOT be able to reach /lms anymore (try visiting it directly).
+
+   E) Full-price enrollment (no coupon) flow
+      - Register a third account, click "Enroll Now" -> pay.html -> skip
+        the coupon box -> pay Rs 9999 using the same test card.
+
+   F) Admin panel checks
+      - "Payments" tab -> both orders should show status "paid".
+      - "Users" tab -> both students should show "Enrolled: Yes".
+      - "Modules & Videos" tab -> this is where you'll paste in real R2
+        video URLs and encryption keys later.
+
+8) RESETTING YOUR LOCAL DATABASE (start over)
+       rm -rf data
+       npm run db:init
+
+TROUBLESHOOTING
+   - "Cannot find module 'better-sqlite3'" -> run `npm install` again;
+     if it still fails, you may need build tools installed (Xcode
+     Command Line Tools on Mac, "Desktop development with C++" on
+     Windows, or `build-essential` on Linux) since better-sqlite3
+     compiles a native binary.
+   - Razorpay checkout doesn't open -> check RAZORPAY_KEY_ID/SECRET in
+     .env are set and you restarted the server after editing .env.
+   - Port 3000 already in use -> change PORT in .env.

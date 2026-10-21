@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Upskill10x — Admin</title>
+
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   UPSKILL10X — LMS THEME
+   Reuses the same design tokens as the marketing site (index.html) so
+   the LMS feels like a continuation of the same product, not a
+   different app bolted on.
+===================================================================== */
+:root{
+  --void:#050308;
+  --purple-900:#001b44;
+  --purple-700:#002c6b;
+  --purple-600:#0056d2;
+  --purple-500:#1a6fe0;
+  --purple-400:#5b96ea;
+  --white:#f9f7fd;
+  --silver:#cfd9ea;
+  --muted:#94a3bf;
+  --line:rgba(91,150,234,0.18);
+
+  /* LMS-specific: greyish-black workspace, purple chrome */
+  --panel-purple: linear-gradient(180deg, #002c6b 0%, #001b44 100%);
+  --panel-purple-active: rgba(255,255,255,0.14);
+  --work-bg: #0f1420;      /* greyish-black */
+  --work-card: #161d2c;
+  --work-card-2: #1c2436;
+  --work-border: rgba(255,255,255,0.08);
+  --ff:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ff);background:var(--work-bg);color:var(--white);min-height:100vh;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+img{max-width:100%;display:block}
+input,textarea{font-family:inherit}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:8px}
+
+.app-shell{display:flex;min-height:100vh}
+
+/* ---------- Sidebar (purple, white text) ---------- */
+.sidebar{
+  width:230px;flex-shrink:0;background:var(--panel-purple);
+  display:flex;flex-direction:column;padding:22px 14px;gap:6px;
+  position:sticky;top:0;height:100vh;
+}
+.sidebar .brand{display:flex;align-items:center;gap:10px;padding:6px 10px 22px}
+.sidebar .brand img{width:30px;height:30px;object-fit:contain}
+.sidebar .brand span{font-weight:800;letter-spacing:.02em;font-size:15px;color:#fff}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;
+  color:var(--silver);font-weight:600;font-size:14.5px;transition:background .15s, color .15s;
+}
+.nav-item:hover{background:rgba(255,255,255,0.08);color:#fff}
+.nav-item.active{background:var(--panel-purple-active);color:#fff}
+.nav-item svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:10px}
+.sidebar-footer .logout-btn{width:100%;justify-content:center;background:rgba(0,0,0,.2)}
+
+/* ---------- Header (purple, white text, logo only) ---------- */
+.topbar{
+  height:64px;flex-shrink:0;background:var(--purple-700);
+  display:flex;align-items:center;padding:0 26px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.topbar img{height:26px}
+
+/* ---------- Main work area (greyish-black, white text) ---------- */
+.main-col{flex:1;display:flex;flex-direction:column;min-width:0}
+.workspace{flex:1;padding:30px 34px;overflow-y:auto}
+h1,h2,h3{font-weight:800;letter-spacing:-0.02em}
+.page-title{font-size:24px;margin-bottom:4px}
+.page-sub{color:var(--muted);font-size:14px;margin-bottom:26px}
+
+.card{background:var(--work-card);border:1px solid var(--work-border);border-radius:14px;padding:20px}
+.card:has(table){overflow-x:auto;-webkit-overflow-scrolling:touch}
+.card table{min-width:640px}
+
+/* ---------- Modules / videos ---------- */
+.module{margin-bottom:16px;border-radius:14px;overflow:hidden;border:1px solid var(--work-border);background:var(--work-card)}
+.module-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer}
+.module-head h3{font-size:15.5px;width:50%}
+.module-head .badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(26,111,224,.18);color:var(--purple-400)}
+.module.locked .module-head{opacity:.55;cursor:not-allowed}
+.module.locked .badge{background:rgba(255,255,255,.08);color:var(--muted)}
+.module-body{display:none;border-top:1px solid var(--work-border)}
+.module.open .module-body{display:block}
+.video-row{
+  display:flex;align-items:center;gap:12px;padding:13px 18px;
+  border-bottom:1px solid var(--work-border);cursor:pointer;transition:background .12s;
+}
+.video-row:last-child{border-bottom:none}
+.video-row:hover{background:var(--work-card-2)}
+.video-row.disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+.video-row .dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.video-row.completed .dot{background:var(--purple-500);border-color:var(--purple-500)}
+.video-row.completed .dot::after{content:'✓';font-size:11px;color:#fff}
+.video-row .vt{font-size:14px;font-weight:600}
+
+/* ---------- Player ---------- */
+.player-wrap{background:#000;border-radius:14px;overflow:hidden;margin-bottom:18px}
+.player-wrap video{width:100%;display:block;max-height:60vh;background:#000}
+.player-title{font-size:17px;font-weight:800;margin:14px 0 6px}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13.5px;margin-bottom:16px}
+
+/* ---------- Community ---------- */
+.thread-item{padding:16px 0;border-bottom:1px solid var(--work-border)}
+.thread-item h4{font-size:15px;margin-bottom:4px}
+.thread-meta{font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.thread-body{font-size:13.5px;color:var(--silver);line-height:1.55}
+.new-thread-form{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.new-thread-form input,.new-thread-form textarea{
+  background:var(--work-card-2);border:1px solid var(--work-border);border-radius:10px;
+  padding:11px 13px;color:#fff;font-size:14px;resize:vertical;
+}
+.reply{padding:12px 0;border-bottom:1px solid var(--work-border)}
+.reply:last-child{border-bottom:none}
+
+/* ---------- Account ---------- */
+.account-row{display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--work-border);font-size:14px}
+.account-row:last-child{border-bottom:none}
+.account-row span:first-child{color:var(--muted)}
+
+/* ---------- Buttons ---------- */
+.btn{padding:11px 18px;border-radius:11px;font-weight:700;font-size:13.5px;display:inline-flex;align-items:center;gap:8px}
+.btn-purple{background:linear-gradient(120deg,var(--purple-600),var(--purple-500));color:#fff}
+.btn-orange{background:#f97316;color:#fff}
+.btn[disabled]{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--work-border)}
+
+.empty-state{color:var(--muted);font-size:14px;padding:30px 0;text-align:center}
+
+@media (max-width: 860px){
+  .sidebar{
+    position:fixed;top:0;right:-80%;left:auto;height:100vh;width:80%;max-width:340px;
+    z-index:60;transition:right .28s ease;box-shadow:-8px 0 30px rgba(0,0,0,.4);
+  }
+  .sidebar.open{right:0}
+  .sidebar-backdrop{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:55;
+  }
+  .sidebar-backdrop.open{display:block}
+  .hamburger-btn{
+    display:flex;margin-left:auto;align-items:center;justify-content:center;
+    width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.08);
+  }
+  .hamburger-btn svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2}
+  .workspace{padding:20px 16px}
+}
+@media (min-width: 861px){
+  .hamburger-btn{display:none}
+  .sidebar-backdrop{display:none}
+}
+
+
+</style>
+<style>
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--work-border)}
+  th{color:var(--muted);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  tr:hover td{background:var(--work-card-2)}
+  .pill{padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:700;display:inline-block}
+  .pill.pending{background:rgba(255,255,255,.08);color:var(--muted)}
+  .pill.approved,.pill.paid{background:rgba(126,231,135,.15);color:#7ee787}
+  .pill.rejected,.pill.failed{background:rgba(239,45,58,.15);color:#ff5b63}
+  .btn-sm{padding:7px 12px;font-size:12.5px;border-radius:8px}
+  .toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal-bg.show{display:flex}
+  .modal{background:var(--work-card);border:1px solid var(--work-border);border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+  .modal select{width:100%;padding:11px 13px;margin-bottom:10px;border-radius:9px;border:1px solid var(--work-border);background:var(--work-card-2);color:#fff;font-size:14px}
+  .modal label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:2px 0 5px}
+  .modal .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .chk{display:flex!important;align-items:center;gap:8px;color:var(--silver)!important;font-size:13.5px!important;margin:4px 0 12px!important}
+  .chk input{width:auto!important;margin:0!important}
+  .sel{background:var(--work-card-2);border:1px solid var(--work-border);border-radius:9px;padding:10px 12px;color:#fff;font-size:13.5px}
+  .modal input,.modal textarea{width:100%;padding:11px 13px;margin-bottom:10px;border-radius:9px;border:1px solid var(--work-border);background:var(--work-card-2);color:#fff;font-size:14px}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"></div>
+    <nav>
+      <a href="#" class="nav-item active" data-tab="users">Users</a>
+      <a href="#" class="nav-item" data-tab="courses">Courses</a>
+      <a href="#" class="nav-item" data-tab="content">Modules & Videos</a>
+      <a href="#" class="nav-item" data-tab="orders">Payments</a>
+      <a href="#" class="nav-item" data-tab="coupons">Coupons</a>
+      <a href="#" class="nav-item" data-tab="settings">Bundle &amp; Settings</a>
+      <a href="#" class="nav-item" data-tab="curriculum">Curriculum Leads</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="nav-item logout-btn" id="logoutBtn">Log Out</button>
+    </div>
+  </aside>
+  <div class="main-col">
+    <header class="topbar">
+      <img class="logo-lockup" src="/assets/logo-wordmark.png" style="background:#fff;padding:6px 10px;border-radius:9px;height:34px" alt="Upskill10x" alt="Upskill10x logo" style="height:42px;">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </header>
+    <main class="workspace" id="workspace"></main>
+  </div>
+</div>
+
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBody"></div></div>
+
+<script>
+/* =====================================================================
+   UPSKILL10X — Admin dashboard logic
+===================================================================== */
+const workspace = document.getElementById('workspace');
+const modalBg = document.getElementById('modalBg');
+const modalBody = document.getElementById('modalBody');
+const sidebar = document.getElementById('sidebar');
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  sidebarBackdrop.classList.add('open');
+}
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  sidebarBackdrop.classList.remove('open');
+}
+hamburgerBtn.addEventListener('click', openSidebar);
+sidebarBackdrop.addEventListener('click', closeSidebar);
+
+async function api(path, opts = {}) {
+  const res = await fetch('/api' + path, {
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    ...opts
+  });
+  if (res.status === 401 || res.status === 403) { window.location.href = '/admin-login'; throw new Error('unauthorized'); }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+function escapeHtml(str = '') {
+  return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function fmtDate(value) {
+  if (!value) return "";
+
+  let date;
+
+  // Handle: 2026-08-15 13:02:36
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value)) {
+    date = new Date(value.replace(" ", "T"));
+  } 
+  // Handle ISO: 2026-09-15T05:51:10.751Z
+  else {
+    date = new Date(value);
+  }
+
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "Asia/Kolkata"
+  });
+}
+function closeModal() { modalBg.classList.remove('show'); modalBody.innerHTML = ''; }
+function openModal(html) { modalBody.innerHTML = html; modalBg.classList.add('show'); }
+modalBg.addEventListener('click', (e) => { if (e.target === modalBg) closeModal(); });
+
+document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
+  item.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('.nav-item[data-tab]').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+    render(item.dataset.tab);
+    closeSidebar();
+  });
+});
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await api('/logout', { method: 'POST' });
+  window.location.href = '/admin-login';
+});
+
+function render(tab) {
+  if (tab === 'coupons') return renderCoupons();
+  if (tab === 'curriculum') return renderCurriculumLeads();
+  if (tab === 'orders') return renderOrders();
+  if (tab === 'users') return renderUsers();
+  if (tab === 'content') return renderContent();
+  if (tab === 'courses') return renderCourses();
+  if (tab === 'settings') return renderSettings();
+}
+
+/* ---------------------------- CURRICULUM LEADS ---------------------------- */
+async function renderCurriculumLeads() {
+  workspace.innerHTML = `<div class="page-title">Curriculum Leads</div><div class="page-sub">Everyone who downloaded the curriculum PDF from the homepage.</div><div id="tbl" class="empty-state">Loading…</div>`;
+  const { downloads } = await api('/admin/curriculum-downloads');
+  const tbl = document.getElementById('tbl');
+  if (!downloads.length) { tbl.innerHTML = '<div class="empty-state">No downloads yet.</div>'; return; }
+  tbl.className = 'card';
+  tbl.innerHTML = `
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Downloaded</th></tr></thead>
+      <tbody>
+        ${downloads.map(d => `
+          <tr>
+            <td>${escapeHtml(d.name)}</td>
+            <td>${escapeHtml(d.email)}</td>
+            <td>${escapeHtml(d.phone || '—')}</td>
+            <td>${fmtDate(d.downloaded_at)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+/* ---------------------------- shared ---------------------------- */
+const rupee = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+let COURSES_CACHE = null;
+async function getCourses(force) {
+  if (!COURSES_CACHE || force) COURSES_CACHE = (await api('/admin/courses')).courses;
+  return COURSES_CACHE;
+}
+const THEME_NAMES = ['Blue', 'Navy', 'Orange', 'Blue → Orange', 'Sky', 'Teal', 'Navy → Sky', 'Orange → Blue'];
+
+/* ---------------------------- COURSES ---------------------------- */
+async function renderCourses() {
+  workspace.innerHTML = `
+    <div class="page-title">Courses</div>
+    <div class="page-sub">What students browse and buy. Unpublished courses are hidden from the store and the app.</div>
+    <div class="toolbar"><button class="btn btn-purple" id="addCourseBtn">+ Add Course</button></div>
+    <div id="tbl" class="empty-state">Loading…</div>`;
+  document.getElementById('addCourseBtn').addEventListener('click', () => courseModal());
+  const courses = await getCourses(true);
+  const tbl = document.getElementById('tbl');
+  if (!courses.length) { tbl.innerHTML = '<div class="empty-state">No courses yet.</div>'; return; }
+  tbl.className = 'card';
+  tbl.innerHTML = `<table>
+    <thead><tr><th>#</th><th>Course</th><th>Price</th><th>Content</th><th>Buyers</th><th>Status</th><th></th></tr></thead>
+    <tbody>${courses.map(c => `
+      <tr>
+        <td>${c.order_index}</td>
+        <td><b>${escapeHtml(c.title)}</b><br><span style="color:var(--muted);font-size:12px">/course/${escapeHtml(c.slug)} · ${escapeHtml(c.category || '—')}</span></td>
+        <td>${rupee(c.price)}${c.mrp ? `<br><s style="color:var(--muted);font-size:12px">${rupee(c.mrp)}</s>` : ''}</td>
+        <td>${c.module_count} modules<br><span style="color:var(--muted);font-size:12px">${c.lesson_count} lessons</span></td>
+        <td>${c.buyers}</td>
+        <td>${c.published ? '<span class="pill approved">Published</span>' : '<span class="pill pending">Draft</span>'}</td>
+        <td style="white-space:nowrap">
+          <a class="btn btn-ghost btn-sm" href="/course/${escapeHtml(c.slug)}" target="_blank">View</a>
+          <button class="btn btn-ghost btn-sm" data-edit="${c.id}">Edit</button>
+          <button class="btn btn-ghost btn-sm" data-content="${c.id}">Content</button>
+          <button class="btn btn-ghost btn-sm" data-del="${c.id}">Delete</button>
+        </td>
+      </tr>`).join('')}</tbody></table>`;
+  tbl.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => courseModal(courses.find(c => c.id == b.dataset.edit))));
+  tbl.querySelectorAll('[data-content]').forEach(b => b.addEventListener('click', () => { contentCourseId = Number(b.dataset.content); goTab('content'); }));
+  tbl.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Delete this course? (Only possible when it has no modules and no buyers.)')) return;
+    try { await api('/admin/courses/' + b.dataset.del, { method: 'DELETE' }); renderCourses(); } catch (e) { alert(e.message); }
+  }));
+}
+
+function courseModal(c) {
+  const v = (k, d = '') => c && c[k] !== null && c[k] !== undefined ? escapeHtml(String(c[k])) : d;
+  openModal(`
+    <h3 style="margin-bottom:14px">${c ? 'Edit' : 'Add'} Course</h3>
+    <label>Title</label><input id="fTitle" value="${v('title')}">
+    <label>URL slug (leave blank to generate)</label><input id="fSlug" value="${v('slug')}" placeholder="e.g. seo-masterclass">
+    <label>Subtitle (one line on cards)</label><input id="fSub" value="${v('subtitle')}">
+    <label>Description</label><textarea id="fDesc" rows="3">${v('description')}</textarea>
+    <label>What you'll learn (one point per line)</label><textarea id="fOut" rows="4">${v('outcomes')}</textarea>
+    <div class="row2">
+      <div><label>Price (₹)</label><input id="fPrice" type="number" min="0" value="${v('price', '499')}"></div>
+      <div><label>MRP / strike-through price (₹)</label><input id="fMrp" type="number" min="0" value="${v('mrp')}"></div>
+      <div><label>Category</label><input id="fCat" value="${v('category')}" placeholder="SEO, Design, Data…"></div>
+      <div><label>Level</label><input id="fLevel" value="${v('level', 'Beginner')}"></div>
+      <div><label>Language</label><input id="fLang" value="${v('language', 'Hindi + English')}"></div>
+      <div><label>Order (lower shows first)</label><input id="fOrder" type="number" value="${v('order_index', '')}"></div>
+    </div>
+    <label>Thumbnail image URL (optional — otherwise a coloured card is generated)</label><input id="fThumb" value="${v('thumbnail_url')}">
+    <label>Card colour</label><select id="fTheme">${THEME_NAMES.map((n, i) => `<option value="${i}" ${c && Number(c.theme) === i ? 'selected' : ''}>${n}</option>`).join('')}</select>
+    <label class="chk"><input type="checkbox" id="fPub" ${!c || c.published ? 'checked' : ''}> Published (visible to students)</label>
+    <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="cancelBtn">Cancel</button><button class="btn btn-purple btn-sm" id="saveBtn">Save</button></div>`);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const g = id => document.getElementById(id).value.trim();
+    const payload = {
+      title: g('fTitle'), slug: g('fSlug'), subtitle: g('fSub'), description: g('fDesc'), outcomes: g('fOut'),
+      price: Number(g('fPrice')) || 0, mrp: g('fMrp') ? Number(g('fMrp')) : null, category: g('fCat'), level: g('fLevel'),
+      language: g('fLang'), thumbnail_url: g('fThumb'), theme: Number(g('fTheme')), published: document.getElementById('fPub').checked
+    };
+    if (g('fOrder') !== '') payload.order_index = Number(g('fOrder'));
+    if (!payload.title) return alert('Enter a title.');
+    try {
+      if (c) await api('/admin/courses/' + c.id, { method: 'PUT', body: JSON.stringify(payload) });
+      else await api('/admin/courses', { method: 'POST', body: JSON.stringify(payload) });
+      closeModal(); renderCourses();
+    } catch (e) { alert(e.message); }
+  });
+}
+
+/* ---------------------------- SETTINGS (bundle) ---------------------------- */
+async function renderSettings() {
+  workspace.innerHTML = `<div class="page-title">Bundle &amp; Settings</div><div class="page-sub">The All-Access Pass unlocks every course, including ones you add later.</div><div id="area" class="empty-state">Loading…</div>`;
+  const { settings: s } = await api('/admin/settings');
+  const area = document.getElementById('area');
+  area.className = 'card';
+  area.style.maxWidth = '560px';
+  const inp = (id, label, val, type = 'text') => `<label style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 5px">${label}</label><input id="${id}" type="${type}" value="${escapeHtml(val || '')}" style="width:100%;padding:11px 13px;margin-bottom:14px;border-radius:9px;border:1px solid var(--work-border);background:var(--work-card-2);color:#fff;font-size:14px">`;
+  area.innerHTML = `
+    ${inp('sTitle', 'Bundle name', s.bundle_title)}
+    ${inp('sPrice', 'Bundle price (₹)', s.bundle_price, 'number')}
+    ${inp('sMrp', 'Strike-through price (₹)', s.bundle_mrp, 'number')}
+    ${inp('sTag', 'Tagline', s.bundle_tagline)}
+    <button class="btn btn-purple" id="saveSettings">Save</button> <span id="savedNote" style="color:#7ee787;font-size:13px;margin-left:10px"></span>`;
+  document.getElementById('saveSettings').addEventListener('click', async () => {
+    try {
+      await api('/admin/settings', { method: 'PUT', body: JSON.stringify({
+        bundle_title: document.getElementById('sTitle').value.trim(),
+        bundle_price: Number(document.getElementById('sPrice').value),
+        bundle_mrp: Number(document.getElementById('sMrp').value) || '',
+        bundle_tagline: document.getElementById('sTag').value.trim()
+      }) });
+      document.getElementById('savedNote').textContent = 'Saved ✓';
+    } catch (e) { alert(e.message); }
+  });
+}
+
+/* ---------------------------- COUPONS ---------------------------- */
+async function renderCoupons() {
+  workspace.innerHTML = `
+    <div class="page-title">Coupons</div>
+    <div class="page-sub">Percentage discounts that work on any course and on the All-Access Pass. No expiry or use limit — they stay active until you edit or delete them.</div>
+    <div class="toolbar"><button class="btn btn-purple" id="addCouponBtn">+ Add Coupon</button></div>
+    <div id="couponsArea" class="empty-state">Loading…</div>`;
+  document.getElementById('addCouponBtn').addEventListener('click', () => couponModal());
+  const { coupons } = await api('/admin/coupons');
+  const area = document.getElementById('couponsArea');
+  if (!coupons.length) { area.innerHTML = '<div class="empty-state">No coupons yet. Create one above.</div>'; return; }
+  area.className = 'card';
+  area.innerHTML = `<table>
+    <thead><tr><th>Code</th><th>Discount</th><th>Paid orders</th><th>Created</th><th></th></tr></thead>
+    <tbody>${coupons.map(c => `
+      <tr data-code="${escapeHtml(c.code)}">
+        <td><code>${escapeHtml(c.code)}</code></td>
+        <td>${c.percent_off !== null && c.percent_off !== undefined ? c.percent_off + '% off' : `Old coupon: All-Access for ${rupee(c.discount_price)}`}</td>
+        <td>${c.used_count}</td>
+        <td>${fmtDate(c.created_at)}</td>
+        <td style="white-space:nowrap"><button class="btn btn-ghost btn-sm edit-coupon-btn">Edit</button> <button class="btn btn-ghost btn-sm del-coupon-btn">Delete</button></td>
+      </tr>`).join('')}</tbody></table>`;
+  area.querySelectorAll('tr[data-code]').forEach(row => {
+    const code = row.dataset.code;
+    const data = coupons.find(c => c.code === code);
+    row.querySelector('.edit-coupon-btn').addEventListener('click', () => couponModal(data));
+    row.querySelector('.del-coupon-btn').addEventListener('click', async () => {
+      if (!confirm('Delete this coupon? It will stop working at checkout.')) return;
+      await api('/admin/coupons/' + encodeURIComponent(code), { method: 'DELETE' });
+      renderCoupons();
+    });
+  });
+}
+
+function couponModal(existing) {
+  openModal(`
+    <h3 style="margin-bottom:14px">${existing ? 'Edit' : 'Add'} Coupon</h3>
+    <label>Code (what students type at checkout)</label><input type="text" id="cCode" value="${existing ? escapeHtml(existing.code) : ''}">
+    <label>Discount %</label><input type="number" id="cPct" min="1" max="100" placeholder="e.g. 20" value="${existing && existing.percent_off ? existing.percent_off : ''}">
+    <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="cancelBtn">Cancel</button><button class="btn btn-purple btn-sm" id="saveBtn">Save</button></div>`);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const code = document.getElementById('cCode').value.trim();
+    const pct = Number(document.getElementById('cPct').value);
+    if (!code || !(pct > 0 && pct <= 100)) { alert('Enter a code and a discount between 1 and 100%.'); return; }
+    try {
+      if (existing) await api('/admin/coupons/' + encodeURIComponent(existing.code), { method: 'PUT', body: JSON.stringify({ code, percent_off: pct }) });
+      else await api('/admin/coupons', { method: 'POST', body: JSON.stringify({ code, percent_off: pct }) });
+      closeModal(); renderCoupons();
+    } catch (err) { alert(err.message); }
+  });
+}
+
+/* ---------------------------- ORDERS / PAYMENTS ---------------------------- */
+async function renderOrders() {
+  workspace.innerHTML = `<div class="page-title">Payments</div><div class="page-sub">Every checkout attempt and its status.</div><div id="tbl" class="empty-state">Loading…</div>`;
+  const { orders } = await api('/admin/orders');
+  const tbl = document.getElementById('tbl');
+  if (!orders.length) { tbl.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
+  const paid = orders.filter(o => o.status === 'paid');
+  const revenue = paid.reduce((n, o) => n + o.amount, 0) / 100;
+  tbl.className = '';
+  tbl.innerHTML = `
+    <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="card" style="padding:14px 18px"><div style="color:var(--muted);font-size:12px">Revenue</div><div style="font-size:22px;font-weight:800">${rupee(revenue)}</div></div>
+      <div class="card" style="padding:14px 18px"><div style="color:var(--muted);font-size:12px">Paid orders</div><div style="font-size:22px;font-weight:800">${paid.length}</div></div>
+      <div class="card" style="padding:14px 18px"><div style="color:var(--muted);font-size:12px">All-Access sold</div><div style="font-size:22px;font-weight:800">${paid.filter(o => (o.item_type || 'bundle') === 'bundle').length}</div></div>
+    </div>
+    <div class="card"><table>
+      <thead><tr><th>Name</th><th>Email</th><th>Item</th><th>Amount</th><th>Coupon</th><th>Status</th><th>Razorpay Payment ID</th><th>Date</th></tr></thead>
+      <tbody>${orders.map(o => `
+        <tr>
+          <td>${escapeHtml(o.name || '')}</td>
+          <td>${escapeHtml(o.email || '')}</td>
+          <td>${(o.item_type || 'bundle') === 'bundle' ? '<span class="pill paid" style="background:rgba(249,115,22,.15);color:#fb923c">All-Access</span>' : escapeHtml(o.course_title || 'Course #' + o.course_id)}</td>
+          <td>${rupee(o.amount / 100)}</td>
+          <td>${o.coupon_code ? escapeHtml(o.coupon_code) : '—'}</td>
+          <td><span class="pill ${o.status}">${o.status}</span></td>
+          <td><code style="font-size:11.5px">${escapeHtml(o.razorpay_payment_id || '—')}</code></td>
+          <td>${fmtDate(o.created_at)}</td>
+        </tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ---------------------------- USERS ---------------------------- */
+async function renderUsers() {
+  workspace.innerHTML = `<div class="page-title">Users</div><div class="page-sub">All registered students. Green dot = active in the last 15 minutes. Use “Access” to grant a course or the All-Access Pass by hand (offline payments, scholarships).</div>
+    <div class="toolbar"><input class="sel" id="userQ" placeholder="Search name or email…" style="min-width:260px"></div><div id="tbl" class="empty-state">Loading…</div>`;
+  const [{ users }, { active_users }] = await Promise.all([api('/admin/users'), api('/admin/users/active')]);
+  const activeIds = new Set(active_users.map(u => u.id));
+  const students = users.filter(u => u.role === 'student');
+  const tbl = document.getElementById('tbl');
+  const draw = (q = '') => {
+    const list = students.filter(u => !q || (u.name + ' ' + u.email).toLowerCase().includes(q));
+    tbl.className = 'card';
+    tbl.innerHTML = `<table>
+      <thead><tr><th></th><th>Name</th><th>Email / Phone</th><th>Access</th><th>Joined</th><th>Last Login</th><th></th></tr></thead>
+      <tbody>${list.map(u => `
+        <tr>
+          <td>${activeIds.has(u.id) ? '<span style="color:#7ee787">●</span>' : '<span style="color:var(--muted)">○</span>'}</td>
+          <td>${escapeHtml(u.name)}</td>
+          <td>${escapeHtml(u.email)}<br><span style="color:var(--muted);font-size:12px">${escapeHtml(u.phone || '')}</span></td>
+          <td>${u.all_access ? '<span class="pill paid" style="background:rgba(249,115,22,.15);color:#fb923c">All-Access</span>' : u.courses ? `<span style="font-size:12.5px">${escapeHtml(u.courses)}</span>` : '<span class="pill pending">Free</span>'}</td>
+          <td>${fmtDate(u.created_at)}</td>
+          <td>${fmtDate(u.last_login_at)}</td>
+          <td><button class="btn btn-ghost btn-sm" data-access="${u.id}">Access</button></td>
+        </tr>`).join('') || '<tr><td colspan="7" class="empty-state">No students match.</td></tr>'}</tbody></table>`;
+    tbl.querySelectorAll('[data-access]').forEach(b => b.addEventListener('click', () => accessModal(students.find(u => u.id == b.dataset.access))));
+  };
+  draw();
+  document.getElementById('userQ').addEventListener('input', e => draw(e.target.value.trim().toLowerCase()));
+}
+
+async function accessModal(u) {
+  const courses = await getCourses();
+  const owned = (u.courses || '').split(' · ');
+  openModal(`
+    <h3 style="margin-bottom:4px">Access for ${escapeHtml(u.name)}</h3>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:14px">${escapeHtml(u.email)}</p>
+    <label class="chk"><input type="checkbox" id="aAll" ${u.all_access ? 'checked' : ''}> All-Access Pass (every course)</label>
+    <label>Individual courses</label>
+    ${courses.map(c => `<label class="chk"><input type="checkbox" data-course="${c.id}" ${owned.includes(c.title) ? 'checked' : ''}> ${escapeHtml(c.title)}</label>`).join('')}
+    <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="cancelBtn">Cancel</button><button class="btn btn-purple btn-sm" id="saveBtn">Save</button></div>`);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    try {
+      const all = document.getElementById('aAll').checked;
+      if (all !== !!u.all_access) await api(`/admin/users/${u.id}/access`, { method: 'POST', body: JSON.stringify({ all_access: all }) });
+      for (const cb of modalBody.querySelectorAll('[data-course]')) {
+        const c = courses.find(x => x.id == cb.dataset.course);
+        const had = owned.includes(c.title);
+        if (cb.checked !== had) await api(`/admin/users/${u.id}/access`, { method: 'POST', body: JSON.stringify({ course_id: c.id, revoke: !cb.checked }) });
+      }
+      closeModal(); renderUsers();
+    } catch (e) { alert(e.message); }
+  });
+}
+
+/* ---------------------------- CONTENT (Modules & Videos) ---------------------------- */
+let contentCourseId = null;
+function goTab(tab) {
+  document.querySelectorAll('.nav-item[data-tab]').forEach(i => i.classList.toggle('active', i.dataset.tab === tab));
+  render(tab);
+}
+
+async function renderContent() {
+  const courses = await getCourses(true);
+  const { modules: orphans } = await api('/admin/modules?course_id=unassigned');
+  if (contentCourseId !== 'unassigned' && (!contentCourseId || !courses.some(c => c.id === contentCourseId))) contentCourseId = orphans.length ? 'unassigned' : (courses.length ? courses[0].id : null);
+  workspace.innerHTML = `
+    <div class="page-title">Modules & Videos</div>
+    <div class="page-sub">Pick a course, then manage its modules and lessons. Students unlock module N after finishing module N-1. Tick “Free preview” on a lesson to let anyone watch it.</div>
+    <div class="toolbar">
+      <select class="sel" id="courseSel">${orphans.length ? `<option value="unassigned" ${contentCourseId === 'unassigned' ? 'selected' : ''}>⚠ Unassigned modules (${orphans.length}) — not visible to students</option>` : ''}${courses.map(c => `<option value="${c.id}" ${c.id === contentCourseId ? 'selected' : ''}>${escapeHtml(c.title)}${c.published ? '' : ' (draft)'}</option>`).join('')}</select>
+      <button class="btn btn-purple" id="addModuleBtn" ${courses.length && contentCourseId !== 'unassigned' ? '' : 'disabled'}>+ Add Module</button>
+    </div>
+    <div id="modulesArea" class="empty-state">${courses.length ? 'Loading…' : 'Create a course first (Courses tab).'}</div>`;
+  if (!courses.length) return;
+  document.getElementById('courseSel').addEventListener('change', e => { contentCourseId = e.target.value === 'unassigned' ? 'unassigned' : Number(e.target.value); renderContent(); });
+  document.getElementById('addModuleBtn').addEventListener('click', () => moduleModal());
+
+  const { modules } = await api('/admin/modules?course_id=' + contentCourseId);
+  const area = document.getElementById('modulesArea');
+  if (!modules.length) { area.innerHTML = '<div class="empty-state">No modules in this course yet.</div>'; return; }
+  area.className = '';
+  if (contentCourseId === 'unassigned') area.insertAdjacentHTML('beforebegin', '<div class="card" style="margin-bottom:16px;border-color:#f97316;color:#fdba74;font-size:13.5px">These modules came from the old single-program setup and didn\'t match a course by name. Click <b>Edit</b> on each and pick its course.</div>');
+  area.innerHTML = (await Promise.all(modules.map(async (m, idx) => {
+    const { videos } = await api('/admin/videos?module_id=' + m.id);
+    return `
+      <div class="module open" data-module="${m.id}">
+        <div class="module-head" style="cursor:default">
+          <h3>${idx + 1}. ${escapeHtml(m.title)} <span style="color:var(--muted);font-weight:600;font-size:12px">(Module ID: ${m.id})</span> ${m.published ? '' : '<span style="color:var(--muted);font-weight:600">(unpublished)</span>'}</h3>
+          <span style="white-space:nowrap">
+            <button class="btn btn-ghost btn-sm add-video-btn" data-module="${m.id}">+ Video</button>
+            <button class="btn btn-ghost btn-sm edit-module-btn" data-module='${JSON.stringify(m).replace(/'/g, "&#39;")}'>Edit</button>
+            <button class="btn btn-ghost btn-sm del-module-btn" data-module="${m.id}">Delete</button>
+          </span>
+        </div>
+        <div class="module-body">
+          ${videos.map(v => `
+            <div class="video-row" style="cursor:default">
+              <span class="vt">${escapeHtml(v.title)} <span style="color:var(--muted);font-weight:600;font-size:11.5px">(Video ID: ${v.id}${v.duration_secs ? ' · ' + Math.round(v.duration_secs / 60) + ' min' : ''}${v.encryption_key_b64 ? ' · 🔒 encrypted' : ''}${v.hls_url ? '' : ' · ⚠ no video URL'})</span>
+                ${v.is_preview ? '<span class="pill paid" style="margin-left:6px">Free preview</span>' : ''}${v.published ? '' : '<span class="pill pending" style="margin-left:6px">Hidden</span>'}</span>
+              <span style="margin-left:auto;display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm edit-video-btn" data-video='${JSON.stringify(v).replace(/'/g, "&#39;")}'>Edit</button>
+                <button class="btn btn-ghost btn-sm del-video-btn" data-video="${v.id}">Delete</button>
+              </span>
+            </div>`).join('') || '<div class="empty-state" style="padding:16px">No videos in this module yet.</div>'}
+        </div>
+      </div>`;
+  }))).join('');
+
+  area.querySelectorAll('.add-video-btn').forEach(btn => btn.addEventListener('click', () => videoModal(btn.dataset.module)));
+  area.querySelectorAll('.edit-video-btn').forEach(btn => btn.addEventListener('click', () => videoModal(null, JSON.parse(btn.dataset.video))));
+  area.querySelectorAll('.edit-module-btn').forEach(btn => btn.addEventListener('click', () => moduleModal(JSON.parse(btn.dataset.module))));
+  area.querySelectorAll('.del-module-btn').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Delete this module and all its videos?')) return;
+    await api('/admin/modules/' + btn.dataset.module, { method: 'DELETE' });
+    renderContent();
+  }));
+  area.querySelectorAll('.del-video-btn').forEach(btn => btn.addEventListener('click', async () => {
+    if (!confirm('Delete this video?')) return;
+    await api('/admin/videos/' + btn.dataset.video, { method: 'DELETE' });
+    renderContent();
+  }));
+}
+
+async function moduleModal(m) {
+  const courses = await getCourses();
+  openModal(`
+    <h3 style="margin-bottom:14px">${m ? 'Edit' : 'Add'} Module</h3>
+    <label>Title</label><input type="text" id="mTitle" value="${m ? escapeHtml(m.title) : ''}">
+    <label>Description (optional)</label><textarea id="mDesc" rows="2">${m ? escapeHtml(m.description || '') : ''}</textarea>
+    <div class="row2">
+      <div><label>Course</label><select id="mCourse">${m && !m.course_id ? '<option value="" selected disabled>Pick a course…</option>' : ''}${courses.map(c => `<option value="${c.id}" ${(m ? m.course_id : contentCourseId) === c.id ? 'selected' : ''}>${escapeHtml(c.title)}</option>`).join('')}</select></div>
+      <div><label>Order</label><input type="number" id="mOrder" value="${m ? m.order_index : ''}" placeholder="auto"></div>
+    </div>
+    ${m ? `<label class="chk"><input type="checkbox" id="mPub" ${m.published ? 'checked' : ''}> Published</label>` : ''}
+    <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="cancelBtn">Cancel</button><button class="btn btn-purple btn-sm" id="saveBtn">Save</button></div>`);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const title = document.getElementById('mTitle').value.trim();
+    if (!title) return;
+    const payload = { title, description: document.getElementById('mDesc').value.trim(), course_id: Number(document.getElementById('mCourse').value) || undefined };
+    if (!payload.course_id) return alert('Pick the course this module belongs to.');
+    const ord = document.getElementById('mOrder').value;
+    if (ord !== '') payload.order_index = Number(ord);
+    try {
+      if (m) { payload.published = document.getElementById('mPub').checked; await api('/admin/modules/' + m.id, { method: 'PUT', body: JSON.stringify(payload) }); }
+      else await api('/admin/modules', { method: 'POST', body: JSON.stringify(payload) });
+      closeModal(); renderContent();
+    } catch (e) { alert(e.message); }
+  });
+}
+
+function videoModal(moduleId, existing) {
+  const v = (k) => existing && existing[k] !== null && existing[k] !== undefined ? escapeHtml(String(existing[k])) : '';
+  openModal(`
+    <h3 style="margin-bottom:14px">${existing ? 'Edit' : 'Add'} Video</h3>
+    ${!existing ? `<p style="color:var(--muted);font-size:12.5px;margin-bottom:12px">Tip: save with just a title first to get the Video ID, follow the video-conversion steps, then Edit this video to paste the HLS URL and key.</p>` : ''}
+    <label>Title</label><input type="text" id="vTitle" value="${v('title')}">
+    <label>Description</label><textarea id="vDesc" rows="2">${v('description')}</textarea>
+    <label>HLS URL (.m3u8 from Cloudflare R2)</label><input type="text" id="vHls" value="${v('hls_url')}">
+    <label>Encryption key (base64, from enc.key)</label><input type="text" id="vKey" value="${v('encryption_key_b64')}">
+    <div class="row2">
+      <div><label>Duration (minutes)</label><input type="number" id="vDur" min="0" step="0.5" value="${existing && existing.duration_secs ? Math.round(existing.duration_secs / 6) / 10 : ''}"></div>
+      <div><label>Order</label><input type="number" id="vOrder" value="${v('order_index')}" placeholder="auto"></div>
+    </div>
+    <label>Thumbnail URL (optional)</label><input type="text" id="vThumb" value="${v('thumbnail_url')}">
+    <label class="chk"><input type="checkbox" id="vPrev" ${existing && existing.is_preview ? 'checked' : ''}> Free preview — anyone can watch, even without buying</label>
+    ${existing ? `<label class="chk"><input type="checkbox" id="vPub" ${existing.published ? 'checked' : ''}> Published</label>` : ''}
+    <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="cancelBtn">Cancel</button><button class="btn btn-purple btn-sm" id="saveBtn">Save</button></div>`);
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+  document.getElementById('saveBtn').addEventListener('click', async () => {
+    const payload = {
+      title: document.getElementById('vTitle').value.trim(),
+      description: document.getElementById('vDesc').value.trim(),
+      hls_url: document.getElementById('vHls').value.trim(),
+      thumbnail_url: document.getElementById('vThumb').value.trim(),
+      encryption_key_b64: document.getElementById('vKey').value.trim(),
+      duration_secs: Math.round((Number(document.getElementById('vDur').value) || 0) * 60),
+      is_preview: document.getElementById('vPrev').checked
+    };
+    const ord = document.getElementById('vOrder').value;
+    if (ord !== '') payload.order_index = Number(ord);
+    if (!payload.title) return;
+    try {
+      if (existing) { payload.published = document.getElementById('vPub').checked; await api('/admin/videos/' + existing.id, { method: 'PUT', body: JSON.stringify(payload) }); }
+      else await api('/admin/videos', { method: 'POST', body: JSON.stringify({ ...payload, module_id: moduleId }) });
+      closeModal(); renderContent();
+    } catch (e) { alert(e.message); }
+  });
+}
+
+/* ---------------------------- INIT ---------------------------- */
+render('users');
+
+</script>
+</body>
+</html>
